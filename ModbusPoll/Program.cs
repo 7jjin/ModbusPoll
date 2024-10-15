@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ModbusPoll.Interfaces;
+using ModbusPoll.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +18,14 @@ namespace ModbusPoll
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            // Modbus TCP 연결 클래스 인스턴스 생성
+            IModbusConnection modbusConnection = new ModbusTcpConnection();
+
+            // 연결 클래스 인스턴스를 Form1에 주입
+            Form1 form1 = new Form1(modbusConnection);
+
+            Application.Run(form1);
         }
     }
 }
