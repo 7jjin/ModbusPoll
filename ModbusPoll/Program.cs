@@ -27,7 +27,7 @@ namespace ModbusPoll
             IContextMenuService contextMenuService = new ContextMenuService();  
 
             // 연결 클래스 인스턴스를 Form1에 주입
-            Form1 form1 = new Form1(modbusConnection,dataViewService,contextMenuService);
+            Form1 form1 = new Form1(modbusConnection,dataViewService, contextMenuService);
 
             Application.Run(form1);
         }

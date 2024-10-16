@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,6 +29,33 @@ namespace ModbusPoll.Services
             for (int i = 0; i < 10; i++)
             {
                 dataView.Rows[i].Cells[0].Value = i;  // 첫 번째 열에 0부터 9까지 입력
+            }
+        }
+
+        public void AddKeyPressValidation(DataGridView dataView)
+        {
+            dataView.EditingControlShowing += (sender, e) =>
+            {
+                var grid = sender as DataGridView;
+
+                if (grid.CurrentCell.ColumnIndex == 1)
+                {
+                    TextBox textBox = e.Control as TextBox;
+                    if (textBox != null)
+                    {
+                        textBox.KeyPress -= TextBox_KeyPress_NumericOnly;
+                        textBox.KeyPress += TextBox_KeyPress_NumericOnly;
+
+                    }
+                }
+            };
+        }
+
+        private void TextBox_KeyPress_NumericOnly(object sender, KeyPressEventArgs e)
+        {
+            if(!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = true;
             }
         }
     }

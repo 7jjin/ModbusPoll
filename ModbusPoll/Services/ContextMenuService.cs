@@ -15,8 +15,15 @@ namespace ModbusPoll.Services
         public ContextMenuService()
         {
             _contextMenuStrip = new ContextMenuStrip();
-            _contextMenuStrip.Items.Add("Option 1");
-            _contextMenuStrip.Items.Add("Option 2");
+            _contextMenuStrip.Items.Add("Signed");
+            _contextMenuStrip.Items.Add("Unsigned");
+            _contextMenuStrip.Items.Add("Hex");
+            _contextMenuStrip.Items.Add("ASCII");
+            _contextMenuStrip.Items.Add("Binary");
+            _contextMenuStrip.Items.Add("32-bit Signed");
+            _contextMenuStrip.Items.Add("32-bit Unsigned");
+            _contextMenuStrip.Items.Add("64-bit Signed");
+            _contextMenuStrip.Items.Add("64-bit Unsigned");
         }
 
         public void ShowContextMenu(DataGridView dataView, MouseEventArgs e)

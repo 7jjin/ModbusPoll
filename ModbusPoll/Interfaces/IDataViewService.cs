@@ -11,5 +11,6 @@ namespace ModbusPoll.Interfaces
     {
         void InitializeDataView(DataGridView dataView);
         void LoadData(DataGridView dataGridView);
+        void AddKeyPressValidation(DataGridView dataGridView);
     }
 }
