@@ -34,6 +34,8 @@
             this.txt_Port = new System.Windows.Forms.TextBox();
             this.btnConnect = new System.Windows.Forms.Button();
             this.btnDisconnect = new System.Windows.Forms.Button();
+            this.dataView = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataView)).BeginInit();
             this.SuspendLayout();
             // 
             // lbl_IpAddress
@@ -41,7 +43,7 @@
             this.lbl_IpAddress.AutoSize = true;
             this.lbl_IpAddress.Location = new System.Drawing.Point(35, 30);
             this.lbl_IpAddress.Name = "lbl_IpAddress";
-            this.lbl_IpAddress.Size = new System.Drawing.Size(95, 19);
+            this.lbl_IpAddress.Size = new System.Drawing.Size(76, 15);
             this.lbl_IpAddress.TabIndex = 0;
             this.lbl_IpAddress.Text = "Ip Address";
             // 
@@ -88,11 +90,27 @@
             this.btnDisconnect.UseVisualStyleBackColor = true;
             this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
             // 
+            // dataView
+            // 
+            this.dataView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataView.Location = new System.Drawing.Point(38, 102);
+            this.dataView.Name = "dataView";
+            this.dataView.RowHeadersVisible = false;
+            this.dataView.RowHeadersWidth = 51;
+            this.dataView.RowTemplate.Height = 27;
+            this.dataView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataView.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.dataView.Size = new System.Drawing.Size(274, 360);
+            this.dataView.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(800, 696);
+            this.Controls.Add(this.dataView);
             this.Controls.Add(this.btnDisconnect);
             this.Controls.Add(this.btnConnect);
             this.Controls.Add(this.txt_Port);
@@ -101,6 +119,8 @@
             this.Controls.Add(this.lbl_IpAddress);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dataView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -114,6 +134,7 @@
         private System.Windows.Forms.TextBox txt_Port;
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.Button btnDisconnect;
+        private System.Windows.Forms.DataGridView dataView;
     }
 }
 

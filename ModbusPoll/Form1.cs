@@ -54,5 +54,31 @@ namespace ModbusPoll
             _modbusConnection.Disconnect();
             MessageBox.Show("Disconnected from Modbus Slave");
         }
+
+
+        /// <summary>
+        /// Data Table 구조 생성
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            dataView.Columns.Add("Column1", "No");    // "No" 헤더
+            dataView.Columns.Add("Column2", "00000"); // "00000" 헤더
+
+            // 11개의 행 추가 (0~10번 인덱스, 총 11개)
+            for (int i = 0; i < 9; i++)
+            {
+                dataView.Rows.Add();
+            }
+
+            // 2~11행에 첫 번째 열에 0~9 값을 입력
+            for (int i = 0; i < 10; i++)
+            {
+                dataView.Rows[i].Cells[0].Value = i;  // 첫 번째 열에 0부터 9까지 입력
+            }
+        }
+
+
     }
 }
