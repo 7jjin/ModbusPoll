@@ -16,11 +16,17 @@ namespace ModbusPoll
     {
         private IModbusConnection _modbusConnection;
         private ModbusConnectionSettings _settings;
+        private readonly IDataViewService _dataViewService;
+        private readonly IContextMenuService _contextMenuService;
 
-        public Form1(IModbusConnection modbusConnection)
+        public Form1(IModbusConnection modbusConnection, IDataViewService dataViewService, IContextMenuService contextMenuService)
         {
             InitializeComponent();
             _modbusConnection = modbusConnection;
+            _dataViewService = dataViewService;
+            _contextMenuService = contextMenuService;
+
+            dataView.MouseDown += DataView_MouseDown;
         }
 
         /// <summary>
@@ -63,20 +69,15 @@ namespace ModbusPoll
         /// <param name="e"></param>
         private void Form1_Load(object sender, EventArgs e)
         {
-            dataView.Columns.Add("Column1", "No");    // "No" 헤더
-            dataView.Columns.Add("Column2", "00000"); // "00000" 헤더
+            // DataGridView 초기화
+            _dataViewService.InitializeDataView(dataView);
+            // Data Load
+            _dataViewService.LoadData(dataView);
+        }
 
-            // 11개의 행 추가 (0~10번 인덱스, 총 11개)
-            for (int i = 0; i < 9; i++)
-            {
-                dataView.Rows.Add();
-            }
-
-            // 2~11행에 첫 번째 열에 0~9 값을 입력
-            for (int i = 0; i < 10; i++)
-            {
-                dataView.Rows[i].Cells[0].Value = i;  // 첫 번째 열에 0부터 9까지 입력
-            }
+        private void DataView_MouseDown(object sender, MouseEventArgs e)
+        {
+            _contextMenuService.ShowContextMenu(dataView, e);
         }
 
 
