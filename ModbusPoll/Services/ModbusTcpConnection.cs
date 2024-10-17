@@ -1,5 +1,6 @@
 ﻿using ModbusPoll.Interfaces;
 using NModbus;
+using NModbus.Device;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,15 @@ namespace ModbusPoll.Services
                 _tcpClient = null;
                 Console.WriteLine("Disconnected from Modbus Slave.");
             }
+        }
+
+        public async Task<ushort[]> ReadHoldingRegistersAsync(ushort startAddress, ushort quantity)
+        {
+            if (_modbusMaster == null)
+            {
+                throw new InvalidOperationException("ModbusMaster is not connected.");
+            }
+            return await _modbusMaster.ReadHoldingRegistersAsync(1,startAddress, quantity);
         }
     }
 }

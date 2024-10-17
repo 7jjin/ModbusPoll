@@ -1,5 +1,6 @@
 ﻿using ModbusPoll.Interfaces;
 using ModbusPoll.Models;
+using ModbusPoll.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +28,24 @@ namespace ModbusPoll
             _contextMenuService = contextMenuService;
 
             dataView.MouseDown += DataView_MouseDown;
+            txt_ReadAddress.TextChanged += Txt_ReadAddress_TextChanged;
+        }
+
+        private void Txt_ReadAddress_TextChanged(object sender, EventArgs e)
+        {
+            if (ushort.TryParse(txt_ReadAddress.Text, out ushort inputValue))
+            {
+                // 40001을 더한 값 계산
+                int result = inputValue + 40001;
+
+                // 계산 결과를 Label에 표시
+                lbl_ReadPlcAddress.Text = result.ToString();
+            }
+            else
+            {
+                // 변환이 실패하면 에러 메시지 표시
+                MessageBox.Show("올바른 숫자를 입력하세요.");
+            }
         }
 
         /// <summary>
@@ -77,13 +96,58 @@ namespace ModbusPoll
             // 첫 번째 열에 대한 유효성 검사 추가
             _dataViewService.AddKeyPressValidation(dataView);
 
+            txt_ReadAddress.Text = "0";
+            txt_ReadQuantity.Text = "10";  
+            txt_WriteAddress.Text = "0";
+            txt_WriteQuantity.Text = "10";
+
         }
+
+        /// <summary>
+        /// ContextMenu 생성 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
 
         private void DataView_MouseDown(object sender, MouseEventArgs e)
         {
             _contextMenuService.ShowContextMenu(dataView, e);
         }
 
+        /// <summary>
+        /// Slave 데이터 읽기
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
 
+        private async void btnReadData_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ushort startAddress;
+                if (!ushort.TryParse(txt_ReadAddress.Text, out startAddress))
+                {
+                    MessageBox.Show("올바른 주소 값을 입력해주세요.");
+                    return;
+                }
+                ushort quantity;
+                if (!ushort.TryParse(txt_ReadQuantity.Text, out quantity))
+                {
+                    MessageBox.Show("올바른 수량 값을 입력해주세요.");
+                    return;
+                }
+                var data = await _modbusConnection.ReadHoldingRegistersAsync(startAddress, quantity);
+
+                dataView.Rows.Clear();
+                for(int i=0;i< data.Length; i++)
+                {
+                    dataView.Rows.Add(new object[] {i+ startAddress, data[i] });
+                    dataView.AllowUserToAddRows = false;
+                }
+            }catch(Exception ex)
+            {
+                MessageBox.Show("02 lllegal Data Address");
+            }
+        }
     }
 }

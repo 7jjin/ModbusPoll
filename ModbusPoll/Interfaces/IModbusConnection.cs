@@ -10,6 +10,7 @@ namespace ModbusPoll.Interfaces
     {
         void Connect(string ipAddress, int port);
         void Disconnect();
+        Task<ushort[]> ReadHoldingRegistersAsync(ushort startAddress, ushort quantity);
         bool IsConnected { get; }
     }
 }
