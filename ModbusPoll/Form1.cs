@@ -76,6 +76,7 @@ namespace ModbusPoll
 
             // 첫 번째 열에 대한 유효성 검사 추가
             _dataViewService.AddKeyPressValidation(dataView);
+
         }
 
         private void DataView_MouseDown(object sender, MouseEventArgs e)

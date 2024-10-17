@@ -101,6 +101,8 @@
             this.dataView.RowTemplate.Height = 27;
             this.dataView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataView.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.dataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataView.ShowCellToolTips = false;
             this.dataView.Size = new System.Drawing.Size(274, 360);
             this.dataView.TabIndex = 6;
             // 

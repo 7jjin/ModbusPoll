@@ -21,6 +21,7 @@ namespace ModbusPoll.Services
             {
                 dataView.Rows.Add();
             }
+            dataView.CellValidating += DataView_CellValidating;
         }
 
         public void LoadData(DataGridView dataView)
@@ -51,11 +52,36 @@ namespace ModbusPoll.Services
             };
         }
 
+        /// <summary>
+        /// 숫자와 백스페이스만 입력되도록하는 함수
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TextBox_KeyPress_NumericOnly(object sender, KeyPressEventArgs e)
         {
             if(!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
             {
                 e.Handled = true;
+            }
+        }
+        private void DataView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            // 첫 번째 열에 대해서만 유효성 검증 적용
+            if (e.ColumnIndex == 1)
+            {
+                int value;
+
+                // 입력된 값이 숫자인지 확인
+                if (int.TryParse(e.FormattedValue.ToString(), out value))
+                {
+                    // 입력 값이 -32768 ~ 32767 범위 안에 있는지 확인
+                    if (value < -32768 || value > 32767)
+                    {
+                        // 오류 메시지 표시
+                        MessageBox.Show("입력값이 -32768에서 32767 사이여야 합니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        e.Cancel = true; // 값이 유효하지 않으면 수정 모드 유지
+                    }
+                }
             }
         }
     }
