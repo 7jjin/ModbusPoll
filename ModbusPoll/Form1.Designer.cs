@@ -53,7 +53,7 @@
             this.lbl_ReadPlcAddress = new System.Windows.Forms.Label();
             this.lbl_WritePlcAddress = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.rtb_dataView = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -291,15 +291,15 @@
             this.label5.TabIndex = 23;
             this.label5.Text = "PLC address =";
             // 
-            // richTextBox1
+            // rtb_dataView
             // 
-            this.richTextBox1.BackColor = System.Drawing.Color.White;
-            this.richTextBox1.Location = new System.Drawing.Point(38, 480);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(947, 293);
-            this.richTextBox1.TabIndex = 25;
-            this.richTextBox1.Text = "";
+            this.rtb_dataView.BackColor = System.Drawing.Color.White;
+            this.rtb_dataView.Location = new System.Drawing.Point(38, 480);
+            this.rtb_dataView.Name = "rtb_dataView";
+            this.rtb_dataView.ReadOnly = true;
+            this.rtb_dataView.Size = new System.Drawing.Size(947, 293);
+            this.rtb_dataView.TabIndex = 25;
+            this.rtb_dataView.Text = "";
             // 
             // Form1
             // 
@@ -307,7 +307,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1035, 785);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.rtb_dataView);
             this.Controls.Add(this.lbl_WritePlcAddress);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lbl_ReadPlcAddress);
@@ -369,7 +369,7 @@
         private System.Windows.Forms.Label lbl_ReadPlcAddress;
         private System.Windows.Forms.Label lbl_WritePlcAddress;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox rtb_dataView;
     }
 }
 

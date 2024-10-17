@@ -119,6 +119,24 @@ namespace ModbusPoll
         }
 
         /// <summary>
+        /// 이진수를 4자리마다 공백으로 나누어 형식을 맞추는 함수
+        /// 예: "0000000000001011" -> "0000 0000 0000 1011"
+        /// </summary>
+        private string FormatBinary(string binary)
+        {
+            StringBuilder formattedBinary = new StringBuilder();
+            for (int i = 0; i < binary.Length; i++)
+            {
+                if (i > 0 && i % 4 == 0)
+                {
+                    formattedBinary.Append(" "); // 4자리마다 공백 추가
+                }
+                formattedBinary.Append(binary[i]);
+            }
+            return formattedBinary.ToString();
+        }
+
+        /// <summary>
         /// Slave 데이터 읽기
         /// </summary>
         /// <param name="sender"></param>
@@ -140,13 +158,24 @@ namespace ModbusPoll
                     return;
                 }
                 var data = await _modbusConnection.ReadHoldingRegistersAsync(startAddress, quantity);
-
                 dataView.Rows.Clear();
-                for(int i=0;i< data.Length; i++)
+                rtb_dataView.Clear();
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i=0;i< data.Length; i++)
                 {
+                    // DataGridView 2열에 값 저장 
                     dataView.Rows.Add(new object[] {i+ startAddress, data[i] });
                     dataView.AllowUserToAddRows = false;
+
+                    // RichTextView에 값 입력
+                    int signedValue = data[i];
+                    string hexValue = $"0x{data[i]:X4}";
+                    string binaryValue = Convert.ToString(data[i], 2).PadLeft(16, '0');
+                    sb.AppendLine($"Address: {i + startAddress}\tSigned -> {signedValue}\tHex -> {hexValue}\tBinary -> {FormatBinary(binaryValue)}");   
                 }
+                rtb_dataView.Text = sb.ToString();
             }catch(Exception ex)
             {
                 MessageBox.Show("02 lllegal Data Address");
