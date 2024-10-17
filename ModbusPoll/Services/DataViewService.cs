@@ -11,6 +11,10 @@ namespace ModbusPoll.Services
 {
     public class DataViewService : IDataViewService
     {
+        /// <summary>
+        /// DataView 초기화
+        /// </summary>
+        /// <param name="dataView"></param>
         public void InitializeDataView(DataGridView dataView)
         {
             dataView.Columns.Add("Column1", "No");    // "No" 헤더
@@ -24,6 +28,10 @@ namespace ModbusPoll.Services
             dataView.CellValidating += DataView_CellValidating;
         }
 
+        /// <summary>
+        /// 초기 데이터 설정
+        /// </summary>
+        /// <param name="dataView"></param>
         public void LoadData(DataGridView dataView)
         {
             // 2~11행에 첫 번째 열에 0~9 값을 입력
@@ -33,6 +41,10 @@ namespace ModbusPoll.Services
             }
         }
 
+        /// <summary>
+        /// DataGrid에 숫자만 입력되도록 하는 함수
+        /// </summary>
+        /// <param name="dataView"></param>
         public void AddKeyPressValidation(DataGridView dataView)
         {
             dataView.EditingControlShowing += (sender, e) =>
@@ -64,6 +76,12 @@ namespace ModbusPoll.Services
                 e.Handled = true;
             }
         }
+
+        /// <summary>
+        /// 유효성 검사 확인 함수
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DataView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             // 첫 번째 열에 대해서만 유효성 검증 적용

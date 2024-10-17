@@ -31,6 +31,11 @@ namespace ModbusPoll
             txt_ReadAddress.TextChanged += Txt_ReadAddress_TextChanged;
         }
 
+        /// <summary>
+        /// ReadAddress 텍스트 박스의 입력값이 바뀔 때마다 PLC Label값도 바뀜
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Txt_ReadAddress_TextChanged(object sender, EventArgs e)
         {
             if (ushort.TryParse(txt_ReadAddress.Text, out ushort inputValue))
@@ -53,7 +58,6 @@ namespace ModbusPoll
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
         private void btnConnect_Click(object sender, EventArgs e)
         {
             string ipAddress = txt_IpAddress.Text;
@@ -103,12 +107,12 @@ namespace ModbusPoll
 
         }
 
+
         /// <summary>
-        /// ContextMenu 생성 
+        /// DataView 1열 클릭시 ContextMenu 생성
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
         private void DataView_MouseDown(object sender, MouseEventArgs e)
         {
             _contextMenuService.ShowContextMenu(dataView, e);
@@ -119,7 +123,6 @@ namespace ModbusPoll
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
         private async void btnReadData_Click(object sender, EventArgs e)
         {
             try
