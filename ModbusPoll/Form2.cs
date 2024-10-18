@@ -25,7 +25,7 @@ namespace ModbusPoll
             {
                 if (ValidateInput(dataType))
                 {
-                    InputValue = textBox.Text;
+                    InputValue = txt_Value.Text;
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
