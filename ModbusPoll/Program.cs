@@ -21,11 +21,11 @@ namespace ModbusPoll
 
             // Modbus TCP 연결 클래스 인스턴스 생성
             IModbusConnection modbusConnection = new ModbusTcpConnection();
-            // DataViewService 인스턴스 생성
-            IDataViewService dataViewService = new DataViewService();
             // ContextMenuService 인스턴스 생성
-            IContextMenuService contextMenuService = new ContextMenuService();  
-
+            IContextMenuService contextMenuService = new ContextMenuService();
+            // DataViewService 인스턴스 생성
+            IDataViewService dataViewService = new DataViewService((ContextMenuService)contextMenuService);
+            
             // 연결 클래스 인스턴스를 Form1에 주입
             Form1 form1 = new Form1(modbusConnection,dataViewService, contextMenuService);
 

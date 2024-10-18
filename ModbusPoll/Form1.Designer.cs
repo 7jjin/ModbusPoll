@@ -64,6 +64,7 @@
             this.dataView.Location = new System.Drawing.Point(38, 97);
             this.dataView.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataView.Name = "dataView";
+            this.dataView.ReadOnly = true;
             this.dataView.RowHeadersVisible = false;
             this.dataView.RowHeadersWidth = 51;
             this.dataView.RowTemplate.Height = 27;

@@ -14,6 +14,8 @@ namespace ModbusPoll.Services
     {
         private ContextMenuStrip _contextMenuStrip;
         private DataGridView _dataView;
+        private string _selectedDataType = "Signed"; // 기본값을 Signed로 설정
+        public string SelectedDataType => _selectedDataType; // 선택된 데이터 타입 접근
 
         /// <summary>
         /// ContextMenu 메뉴 생성
@@ -25,7 +27,7 @@ namespace ModbusPoll.Services
             var signedItem = _contextMenuStrip.Items.Add("Signed");
             var unsignedItem = _contextMenuStrip.Items.Add("Unsigned");
             var hexItem = _contextMenuStrip.Items.Add("Hex");
-            var asciiItem = _contextMenuStrip.Items.Add("ASCII");
+            //var asciiItem = _contextMenuStrip.Items.Add("ASCII");
             var binaryItem = _contextMenuStrip.Items.Add("Binary");
             var signed32Item = _contextMenuStrip.Items.Add("32-bit Signed");
             var unsigned32Item = _contextMenuStrip.Items.Add("32-bit Unsigned");
@@ -35,7 +37,7 @@ namespace ModbusPoll.Services
             signedItem.Click += OnSignedClick;
             unsignedItem.Click += OnUnsignedClick;
             hexItem.Click += OnHexClick;
-            asciiItem.Click += OnAsciiClick;
+            //asciiItem.Click += OnAsciiClick;
             binaryItem.Click += OnBinaryClick;
         }
 
@@ -66,10 +68,25 @@ namespace ModbusPoll.Services
         private void OnSignedClick(object sender, EventArgs e)
         {
             var selectedCell = _dataView.SelectedCells[1];
-            string currentValue = selectedCell.Value.ToString();
-
-            int signedValue = ConvertToSigned(currentValue);
-            selectedCell.Value = signedValue.ToString(); // 부호 있는 값으로 변환
+            //string currentValue = selectedCell.Value.ToString();
+            if (selectedCell.Value == null)
+            {
+                _selectedDataType = "Signed";
+            }
+            else
+            {
+                int signedValue = ConvertToSigned(selectedCell.Value.ToString());
+                if(signedValue > 32767)
+                {
+                    selectedCell.Value = signedValue - 65536;
+                }
+                else
+                {
+                    selectedCell.Value = signedValue.ToString(); // 부호 있는 값으로 변환
+                }
+                _selectedDataType = "Signed";
+            }
+            
         }
 
         /// <summary>
@@ -78,10 +95,22 @@ namespace ModbusPoll.Services
         private void OnUnsignedClick(object sender, EventArgs e)
         {
             var selectedCell = _dataView.SelectedCells[1];
-            string currentValue = selectedCell.Value.ToString();
+            if (selectedCell.Value == null)
+            {
+                _selectedDataType = "Unsigned";
+            }
+            else
+            {
+                ushort unsignedValue = ConvertToUnsigned16(selectedCell.Value.ToString());
+                selectedCell.Value = unsignedValue.ToString(); // 부호 없는 값으로 변환
+                _selectedDataType = "Unsigned";
 
-            uint unsignedValue = ConvertToUnsigned(currentValue);
-            selectedCell.Value = unsignedValue.ToString(); // 부호 없는 값으로 변환
+                // 변환 후 Signed 값으로 변환
+                int signedValue = ConvertToSignedFromUnsigned(unsignedValue);
+                // 이곳에서 signedValue를 필요한 위치에 표시
+                // 예를 들어, DataGridView의 셀에 표시
+                _dataView.SelectedCells[1].Value = unsignedValue.ToString();
+            }
         }
 
         /// <summary>
@@ -90,23 +119,31 @@ namespace ModbusPoll.Services
         private void OnHexClick(object sender, EventArgs e)
         {
             var selectedCell = _dataView.SelectedCells[1];
-            string currentValue = selectedCell.Value.ToString();
+            if (selectedCell.Value == null)
+            {
+                _selectedDataType = "Hex";
+            }
+            else
+            {
+                int value = ConvertToSigned(selectedCell.Value.ToString()); // 먼저 10진수로 변환
+                selectedCell.Value = $"0x{value:X4}"; // 16진수로 변환
+                _selectedDataType = "Hex";
+            }
 
-            int value = ConvertToSigned(currentValue); // 먼저 10진수로 변환
-            selectedCell.Value = $"0x{value:X4}"; // 16진수로 변환
+            
         }
 
         /// <summary>
         /// 10진수 -> ASCII 변환
         /// </summary>
-        private void OnAsciiClick(object sender, EventArgs e)
-        {
-            var selectedCell = _dataView.SelectedCells[1];
-            string currentValue = selectedCell.Value.ToString();
+        //private void OnAsciiClick(object sender, EventArgs e)
+        //{
+        //    var selectedCell = _dataView.SelectedCells[1];
+        //    string currentValue = selectedCell.Value.ToString();
 
-            int asciiValue = ConvertToSigned(currentValue);
-            selectedCell.Value = ((char)asciiValue).ToString(); // ASCII 문자로 변환
-        }
+        //    int asciiValue = ConvertToSigned(currentValue);
+        //    selectedCell.Value = ((char)asciiValue).ToString(); // ASCII 문자로 변환
+        //}
 
         /// <summary>
         /// 10진수 -> 2진수 변환
@@ -114,10 +151,16 @@ namespace ModbusPoll.Services
         private void OnBinaryClick(object sender, EventArgs e)
         {
             var selectedCell = _dataView.SelectedCells[1];
-            string currentValue = selectedCell.Value.ToString();
-
-            int binaryValue = ConvertToSigned(currentValue);
-            selectedCell.Value = Convert.ToString(binaryValue, 2); // 2진수로 변환
+            if (selectedCell.Value == null)
+            {
+                _selectedDataType = "Binary";
+            }
+            else
+            {
+                int binaryValue = ConvertToSigned(selectedCell.Value.ToString());
+                selectedCell.Value = Convert.ToString(binaryValue, 2); // 2진수로 변환
+                _selectedDataType = "Binary";
+            }
         }
 
         /// <summary>
@@ -145,12 +188,43 @@ namespace ModbusPoll.Services
         }
 
         /// <summary>
-        /// 형식에 따라 부호 없는 값으로 변환
+        /// Signed 값으로 변경 함수(16bit)
         /// </summary>
-        private uint ConvertToUnsigned(string value)
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="OverflowException"></exception>
+        private ushort ConvertToUnsigned16(string value)
         {
-            // 부호 있는 값을 unsigned로 변환
-            return (uint)ConvertToSigned(value);
+            int signedValue = ConvertToSigned(value);
+
+            // 부호 있는 값을 16-bit unsigned로 변환
+            if (signedValue < 0)
+            {
+                return (ushort)(signedValue + (1 << 16)); // 16-bit 2's complement 변환
+            }
+
+            // 16-bit 범위를 벗어나는 경우 처리
+            if (signedValue > ushort.MaxValue)
+            {
+                throw new OverflowException("값이 16-bit 범위를 초과했습니다.");
+            }
+
+            return (ushort)signedValue;
+        }
+
+        /// <summary>
+        /// Unsigned 값으로 변경 함수(16bit)
+        /// </summary>
+        /// <param name="unsignedValue"></param>
+        /// <returns></returns>
+        private int ConvertToSignedFromUnsigned(ushort unsignedValue)
+        {
+            // Unsigned 값이 32768 이상이면 Signed로 변환 시 2의 보수를 적용
+            if (unsignedValue >= 32768)
+            {
+                return unsignedValue - 65536;  // 65536(2^16)을 빼서 Signed 변환
+            }
+            return unsignedValue;  // 32767 이하인 경우 그대로 반환
         }
     }
 }

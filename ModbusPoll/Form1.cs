@@ -163,23 +163,39 @@ namespace ModbusPoll
 
                 StringBuilder sb = new StringBuilder();
 
-                for (int i=0;i< data.Length; i++)
+                for (int i = 0; i < data.Length; i++)
                 {
+                    // Signed 범위 값 처리
+                    int signedValue = (short)data[i]; // 16-bit Signed 처리
+                    string displayedValue;
+
+                    if (signedValue < -32768 || signedValue > 32767)
+                    {
+                        // Signed 범위를 넘어설 경우 Unsigned로 변환
+                        displayedValue = data[i].ToString(); // Unsigned 값 그대로 표시
+                    }
+                    else
+                    {
+                        // Signed 범위 내의 값일 경우 Signed 값 표시
+                        displayedValue = signedValue.ToString();
+                    }
+
                     // DataGridView 2열에 값 저장 
-                    dataView.Rows.Add(new object[] {i+ startAddress, data[i] });
+                    dataView.Rows.Add(new object[] { i + startAddress, displayedValue });
                     dataView.AllowUserToAddRows = false;
 
                     // RichTextView에 값 입력
-                    int signedValue = data[i];
                     string hexValue = $"0x{data[i]:X4}";
                     string binaryValue = Convert.ToString(data[i], 2).PadLeft(16, '0');
-                    sb.AppendLine($"Address: {i + startAddress}\tSigned -> {signedValue}\tHex -> {hexValue}\tBinary -> {FormatBinary(binaryValue)}");   
+                    sb.AppendLine($"Address: {i + startAddress}\tSigned -> {signedValue}\tUnsigned -> {data[i]}\tHex -> {hexValue}\tBinary -> {FormatBinary(binaryValue)}");
                 }
                 rtb_dataView.Text = sb.ToString();
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show("02 lllegal Data Address");
+                MessageBox.Show("02 Illegal Data Address");
             }
         }
+
     }
 }
