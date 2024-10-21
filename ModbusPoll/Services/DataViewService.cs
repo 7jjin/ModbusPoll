@@ -47,6 +47,7 @@ namespace ModbusPoll.Services
             for (int i = 0; i < 10; i++)
             {
                 dataView.Rows[i].Cells[0].Value = i;  // 첫 번째 열에 0부터 9까지 입력
+                dataView.Rows[i].Cells[1].Value = 0;  // 연결 즉시 모두 0으로 초기화
             }
         }
 

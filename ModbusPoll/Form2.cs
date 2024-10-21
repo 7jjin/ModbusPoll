@@ -6,22 +6,12 @@ namespace ModbusPoll
 {
     public partial class Form2 : Form
     {
-        private TextBox textBox;
-        private Button okButton;
-        private Button cancelButton;
         public string InputValue { get; private set; }
         public Form2(string dataType)
         {
             InitializeComponent();
-            this.Text = $"{dataType} 입력";
-
-            // 데이터 타입에 따라 폼 설정
-            textBox = new TextBox { Dock = DockStyle.Fill };
-            this.Controls.Add(textBox);
-            okButton = new Button { Text = "확인", Dock = DockStyle.Bottom };
-            cancelButton = new Button { Text = "취소", Dock = DockStyle.Bottom };
-
-            okButton.Click += (s, e) =>
+            this.Text = $"Enter {dataType}";
+            btnOk.Click += (s, e) =>
             {
                 if (ValidateInput(dataType))
                 {
@@ -30,9 +20,10 @@ namespace ModbusPoll
                     this.Close();
                 }
             };
-
-            this.Controls.Add(okButton);
-            this.Controls.Add(cancelButton);
+            btnCancel.Click += (s, e) =>
+            {
+                this.Close();
+            };
         }
 
         private bool ValidateInput(string dataType)
@@ -42,21 +33,21 @@ namespace ModbusPoll
             switch (dataType)
             {
                 case "Signed":
-                    if (!int.TryParse(textBox.Text, out value) || value < -32768 || value > 32767)
+                    if (!int.TryParse(txt_Value.Text, out value) || value < -32768 || value > 32767)
                     {
                         MessageBox.Show("Signed 값은 -32768 ~ 32767 사이여야 합니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
                     }
                     break;
                 case "Unsigned":
-                    if (!int.TryParse(textBox.Text, out value) || value <= 0 || value > 65535)
+                    if (!int.TryParse(txt_Value.Text, out value) || value <= 0 || value > 65535)
                     {
                         MessageBox.Show("Unsigned 값은 0 ~ 65535 사이여야 합니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
                     }
                     break;
                 case "Hex":
-                    string hexValue = textBox.Text;
+                    string hexValue = txt_Value.Text;
 
                     // '0x'로 시작하는지 확인하고, 16진수 값의 범위를 확인
                     if (!hexValue.StartsWith("0x"))
@@ -84,7 +75,7 @@ namespace ModbusPoll
                     break;
                 case "Binary":
                     // Binary 형식 검사 (0과 1만 허용) 및 길이 제한 (예: 16비트 이하)
-                    string binaryValue = textBox.Text.Replace(" ", "");
+                    string binaryValue = txt_Value.Text.Replace(" ", "");
                     if (!Regex.IsMatch(binaryValue, "^[01]+$"))
                     {
                         MessageBox.Show("Binary 형식은 0과 1로만 구성되어야 합니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace ModbusPoll
         public Form1(IModbusConnection modbusConnection, IDataViewService dataViewService, IContextMenuService contextMenuService)
         {
             InitializeComponent();
+            this.Text = "Modbus Poll";
             _modbusConnection = modbusConnection;
             _dataViewService = dataViewService;
             _contextMenuService = contextMenuService;
@@ -184,11 +186,21 @@ namespace ModbusPoll
                     dataView.Rows.Add(new object[] { i + startAddress, displayedValue });
                     dataView.AllowUserToAddRows = false;
 
+                    // 32bit big-endian 값 저장
+                    //string bigEndian = Convert.ToString(ConverToBigEndian(data[i], data[i+1]));
+
                     // RichTextView에 값 입력
                     string hexValue = $"0x{data[i]:X4}";
                     string binaryValue = Convert.ToString(data[i], 2).PadLeft(16, '0');
                     sb.AppendLine($"Address: {i + startAddress}\tSigned -> {signedValue}\tUnsigned -> {data[i]}\tHex -> {hexValue}\tBinary -> {FormatBinary(binaryValue)}");
+                    
+                    //sb.AppendLine($"32bit Signed big-endian : {bigEndian}");
                 }
+                var firstCelData = dataView.Rows[0].Cells[1].Value.ToString();
+                var nextCell = dataView.Rows[1].Cells[1].Value.ToString();
+                string bigEndian = Convert.ToString(ConverToBigEndian(firstCelData, nextCell));
+                sb.AppendLine("----------------------------------------------------------------------------------------------------------------------------------------");
+                sb.AppendLine($"32bit Signed big-endian : {bigEndian}");
                 rtb_dataView.Text = sb.ToString();
             }
             catch (Exception ex)
@@ -197,5 +209,54 @@ namespace ModbusPoll
             }
         }
 
+
+
+        private long ConverToBigEndian(string firstCellData, string secondCellData)
+        {
+            // 두 셀의 값을 16-bit로 읽어와 결합
+            ushort upperValue = ConvertToUnsigned16(firstCellData);
+            ushort lowerValue = ConvertToUnsigned16(secondCellData);
+
+            // Big-endian으로 변환
+            uint bigEndianValue = ((uint)upperValue << 16) | lowerValue;
+
+            // 32bit signed로 변환 (부호 있는 값을 처리)
+            if (int.Parse(firstCellData)<0 || (int.Parse(firstCellData) <0 && (int.Parse(secondCellData) <0))) // 상위 비트가 1인 경우 음수
+            {
+                return unchecked((long)((ulong)0xFFFFFFFF00000000 | bigEndianValue));
+            }
+
+            return bigEndianValue;
+        }
+
+
+        private ushort ConvertToUnsigned16(string value)
+        {
+            int signedValue = ConvertToSigned(value);
+
+            // 부호 있는 값을 16-bit unsigned로 변환
+            if (signedValue < 0)
+            {
+                return (ushort)(signedValue + (1 << 16)); // 16-bit 2's complement 변환
+            }
+
+            // 16-bit 범위를 벗어나는 경우 처리
+            if (signedValue > ushort.MaxValue)
+            {
+                throw new OverflowException("값이 16-bit 범위를 초과했습니다.");
+            }
+
+            return (ushort)signedValue;
+        }
+        /// <summary>
+        /// Signed 값으로 바꾸는 함수(16bit)
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private int ConvertToSigned(string value)
+        {
+            // 기본적으로 10진수로 처리
+            return int.Parse(value);
+        }
     }
 }

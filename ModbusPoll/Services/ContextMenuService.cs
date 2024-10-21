@@ -23,22 +23,55 @@ namespace ModbusPoll.Services
         public ContextMenuService()
         {
             _contextMenuStrip = new ContextMenuStrip();
+
             // 각 항목 추가
             var signedItem = _contextMenuStrip.Items.Add("Signed");
             var unsignedItem = _contextMenuStrip.Items.Add("Unsigned");
             var hexItem = _contextMenuStrip.Items.Add("Hex");
-            //var asciiItem = _contextMenuStrip.Items.Add("ASCII");
             var binaryItem = _contextMenuStrip.Items.Add("Binary");
-            var signed32Item = _contextMenuStrip.Items.Add("32-bit Signed");
-            var unsigned32Item = _contextMenuStrip.Items.Add("32-bit Unsigned");
-            var signed64Item = _contextMenuStrip.Items.Add("64-bit Signed");
-            var unsigned64Item = _contextMenuStrip.Items.Add("64-bit Unsigned");
+            var signed32Item = new ToolStripMenuItem("32-bit Signed");
+            var unsigned32Item = new ToolStripMenuItem("32-bit Unsigned");
+            var signed64Item = new ToolStripMenuItem("64-bit Signed");
+            var unsigned64Item = new ToolStripMenuItem("64-bit Unsigned");
 
+            // 서브 메뉴를 각 항목에 추가
+            AddEndianSubMenu(signed32Item);
+            AddEndianSubMenu(unsigned32Item);
+            AddEndianSubMenu(signed64Item);
+            AddEndianSubMenu(unsigned64Item);
+
+            // ContextMenuStrip에 항목 추가
+            _contextMenuStrip.Items.Add(signed32Item);
+            _contextMenuStrip.Items.Add(unsigned32Item);
+            _contextMenuStrip.Items.Add(signed64Item);
+            _contextMenuStrip.Items.Add(unsigned64Item);
+
+            // 기존 메뉴 클릭 이벤트 등록
             signedItem.Click += OnSignedClick;
             unsignedItem.Click += OnUnsignedClick;
             hexItem.Click += OnHexClick;
-            //asciiItem.Click += OnAsciiClick;
             binaryItem.Click += OnBinaryClick;
+        }
+
+        // 서브 메뉴를 추가하는 메서드
+        private void AddEndianSubMenu(ToolStripMenuItem menuItem)
+        {
+            var bigEndianItem = new ToolStripMenuItem("Big-endian");
+            var littleEndianItem = new ToolStripMenuItem("Little-endian");
+            var bigEndianByteSwapItem = new ToolStripMenuItem("Big-endian Byte Swap");
+            var littleEndianByteSwapItem = new ToolStripMenuItem("Little-endian Byte Swap");
+
+            // 서브 메뉴 클릭 이벤트
+            bigEndianItem.Click += OnBigEndianClick;
+            littleEndianItem.Click += OnLittleEndianClick;
+            bigEndianByteSwapItem.Click += OnBigEndianByteSwapClick;
+            littleEndianByteSwapItem.Click += OnLittleEndianByteSwapClick;
+
+            // 메뉴에 서브 메뉴 추가
+            menuItem.DropDownItems.Add(bigEndianItem);
+            menuItem.DropDownItems.Add(littleEndianItem);
+            menuItem.DropDownItems.Add(bigEndianByteSwapItem);
+            menuItem.DropDownItems.Add(littleEndianByteSwapItem);
         }
 
         /// <summary>
@@ -129,8 +162,6 @@ namespace ModbusPoll.Services
                 selectedCell.Value = $"0x{value:X4}"; // 16진수로 변환
                 _selectedDataType = "Hex";
             }
-
-            
         }
 
         /// <summary>
@@ -225,6 +256,83 @@ namespace ModbusPoll.Services
                 return unsignedValue - 65536;  // 65536(2^16)을 빼서 Signed 변환
             }
             return unsignedValue;  // 32767 이하인 경우 그대로 반환
+        }
+
+        // 32bit big-endian 
+        private void OnBigEndianClick(object sender, EventArgs e)
+        {
+            var selectedCell = _dataView.SelectedCells[1];
+            int currentRowIndex = selectedCell.RowIndex;
+            int currentColumnIndex = selectedCell.ColumnIndex;
+
+            if (currentRowIndex + 1 >= _dataView.Rows.Count)
+            {
+                MessageBox.Show("다음 행이 존재하지 않습니다.");
+                return;
+            }
+
+            var nextCell = _dataView.Rows[currentRowIndex + 1].Cells[currentColumnIndex];
+
+            // 두 셀의 값을 16-bit로 읽어와 결합
+            int upperValue = ConvertToSigned(selectedCell.Value.ToString());
+            int lowerValue = ConvertToSigned(nextCell.Value.ToString());
+
+            // Big-endian으로 변환
+            int bigEndianValue = ((int)upperValue << 16) | lowerValue;
+
+            // 결과 출력
+            selectedCell.Value = bigEndianValue.ToString();
+            nextCell.Value = "";
+        }
+
+
+
+        private uint ConvertToBigEndian32(int value)
+        {
+            ushort high = (ushort)(value & 0xFFFF); // 하위 16비트
+            ushort low = (ushort)((value >> 16) & 0xFFFF); // 상위 16비트
+
+            // Big-endian 방식으로 결합
+            return ((uint)high << 16) | low; // 0x04D20000
+        }
+
+        private void OnLittleEndianClick(object sender, EventArgs e)
+        {
+            // Little-endian 변환 로직 구현
+            var selectedCell = _dataView.SelectedCells[1];
+            int currentRowIndex = selectedCell.RowIndex;
+            int currentColumnIndex = selectedCell.ColumnIndex;
+
+            if (currentRowIndex + 1 >= _dataView.Rows.Count)
+            {
+                MessageBox.Show("다음 행이 존재하지 않습니다.");
+                return;
+            }
+
+            var nextCell = _dataView.Rows[currentRowIndex + 1].Cells[currentColumnIndex];
+
+            // 두 셀의 값을 16-bit로 읽어와 결합
+            ushort upperValue = ConvertToUnsigned16(selectedCell.Value.ToString());
+            ushort lowerValue = ConvertToUnsigned16(nextCell.Value.ToString());
+
+            // Little-endian으로 변환 (값 순서 반대로)
+            uint littleEndianValue = ((uint)lowerValue << 16) | upperValue;
+
+            // 결과 출력
+            selectedCell.Value = littleEndianValue.ToString();
+            nextCell.Value = "";
+        }
+
+        private void OnBigEndianByteSwapClick(object sender, EventArgs e)
+        {
+            // Big-endian Byte Swap 변환 로직 구현
+            MessageBox.Show("Big-endian Byte Swap 변환 선택됨");
+        }
+
+        private void OnLittleEndianByteSwapClick(object sender, EventArgs e)
+        {
+            // Little-endian Byte Swap 변환 로직 구현
+            MessageBox.Show("Little-endian Byte Swap 변환 선택됨");
         }
     }
 }
