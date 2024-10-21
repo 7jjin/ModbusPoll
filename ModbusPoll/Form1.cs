@@ -197,16 +197,24 @@ namespace ModbusPoll
                     //sb.AppendLine($"32bit Signed big-endian : {bigEndian}");
                 }
                 var firstCelData = dataView.Rows[0].Cells[1].Value.ToString();
-                var nextCell = dataView.Rows[1].Cells[1].Value.ToString();
-                string signedBigEndian32Bit = Convert.ToString(ConverTo32BitBigEndian(firstCelData, nextCell));
-                string signedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndian(firstCelData,nextCell));
-                string signedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwap(firstCelData, nextCell));
-                string signedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwap(firstCelData, nextCell));
+                var secondData = dataView.Rows[1].Cells[1].Value.ToString();
+                var thirdData = dataView.Rows[2].Cells[1].Value.ToString();
+                var fourthData = dataView.Rows[3].Cells[1].Value.ToString();
 
-                string unSignedBigEndian32Bit = Convert.ToString(ConvertTo32BitUnsignedBigEndian(firstCelData, nextCell));
-                string unSignedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndianUnsigned(firstCelData, nextCell));
-                string unSignedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwapUnsigned(firstCelData, nextCell));
-                string unSignedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwapUnsigned(firstCelData, nextCell));
+                string signedBigEndian32Bit = Convert.ToString(ConverTo32BitBigEndian(firstCelData, secondData));
+                string signedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndian(firstCelData, secondData));
+                string signedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwap(firstCelData, secondData));
+                string signedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwap(firstCelData, secondData));
+
+                string unSignedBigEndian32Bit = Convert.ToString(ConvertTo32BitUnsignedBigEndian(firstCelData, secondData));
+                string unSignedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndianUnsigned(firstCelData, secondData));
+                string unSignedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwapUnsigned(firstCelData, secondData));
+                string unSignedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwapUnsigned(firstCelData, secondData));
+
+                string signedBigEndian64Bit = Convert.ToString(ConvertTo64BitBigEndian(firstCelData, secondData,thirdData,fourthData));
+                string signelLittleEndian64Bit = Convert.ToString(ConvertTo64BitLittleEndian(firstCelData, secondData,thirdData,fourthData));
+                string signedBigEndian64BitByteSwap = Convert.ToString(ConvertTo64BitBigEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
+                string signedLittleEndian64BitByteSwap = Convert.ToString(ConvertTo64BitLittleEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
                 sb.AppendLine("----------------------------------------------------------------------------------------------------------------------------------------");
                 if (quantity == 2)
                 {
@@ -215,10 +223,18 @@ namespace ModbusPoll
                     sb.AppendLine($"32bit Signed big-endian Byte Swap : {signedBigEndian32BitByteSwap}");
                     sb.AppendLine($"32bit Signed little-endian Byte Swap : {signedLittleEndian32BitByteSwap}");
 
+                    sb.AppendLine("----------------------------------------------------------------------------------------------------------------------------------------");
+
                     sb.AppendLine($"32bit unSigned big-endian : {unSignedBigEndian32Bit}");
                     sb.AppendLine($"32bit unSigned little-endian : {unSignedLittleEndian32Bit}");
                     sb.AppendLine($"32bit unSigned big-endian Byte Swap : {unSignedBigEndian32BitByteSwap}");
                     sb.AppendLine($"32bit unSigned little-endian Byte Swap : {unSignedLittleEndian32BitByteSwap}");
+                }else if(quantity == 4)
+                {
+                    sb.AppendLine($"64bit Signed big-endian : {signedBigEndian64Bit}");
+                    sb.AppendLine($"64bit Signed little-endian : {signelLittleEndian64Bit}");
+                    sb.AppendLine($"64bit Signed big-endian Byte Swap : {signedBigEndian64BitByteSwap}");
+                    sb.AppendLine($"64bit Signed little-endian Byte Swap : {signedLittleEndian64BitByteSwap}");
                 }
                 
                 rtb_dataView.Text = sb.ToString();
@@ -247,12 +263,9 @@ namespace ModbusPoll
             uint bigEndianValue = ((uint)upperValue << 16) | lowerValue;
 
             // 32bit signed로 변환 (부호 있는 값을 처리)
-            if (int.Parse(firstCellData)<0 || (int.Parse(firstCellData) <0 && (int.Parse(secondCellData) <0))) // 상위 비트가 1인 경우 음수
-            {
-                return unchecked((long)((ulong)0xFFFFFFFF00000000 | bigEndianValue));
-            }
+            int result = unchecked((int)bigEndianValue);
 
-            return bigEndianValue;
+            return result;
         }
 
         /// <summary>
@@ -275,13 +288,10 @@ namespace ModbusPoll
             uint littleEndianValue = ((uint)reversedLower << 16) | reversedUpper;
 
             // 32bit signed로 변환 (부호 있는 값을 처리)
-            if (short.Parse(secondCellData) < 0) // 상위 비트를 확인
-            {
-                return unchecked((long)((ulong)0xFFFFFFFF00000000 | littleEndianValue));
-            }
+            int result = unchecked((int)littleEndianValue);
 
             // 결과 출력
-            return littleEndianValue;
+            return result;
         }
 
         /// <summary>
@@ -430,7 +440,146 @@ namespace ModbusPoll
             return (ulong)swappedValue;  // 결과 값 반환
         }
 
+        //---------------------------------------------------------64bit Singed------------------------------------------------------//
+        /// <summary>
+        /// 64bit big-endian, little-endian 정의 할 때 필요한 함수
+        /// </summary>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <returns></returns>
+        private uint ConvertTo32BitBigEndian(string cell0, string cell1, string cell2, string cell3)
+        {
+            ushort upperValue = ConvertToUnsigned16(cell0); // 상위 16비트
+            ushort lowerValue = ConvertToUnsigned16(cell1); // 하위 16비트
 
+            // Big-endian으로 변환
+            return ((uint)upperValue << 16) | lowerValue;
+        }
+
+        /// <summary>
+        /// 64bit big-endian, little-endian 정의 할 때 필요한 함수
+        /// </summary>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <returns></returns>
+        private uint ConvertTo32BitLittleEndian(string cell2, string cell3, string cell0, string cell1)
+        {
+            ushort upperValue = ConvertToUnsigned16(cell2); // 상위 16비트
+            ushort lowerValue = ConvertToUnsigned16(cell3); // 하위 16비트
+
+            // 각 16-bit 값을 little-endian 방식으로 바이트 순서를 바꿈
+            ushort reversedUpper = (ushort)((upperValue >> 8) | (upperValue << 8));
+            ushort reversedLower = (ushort)((lowerValue >> 8) | (lowerValue << 8));
+
+            // Little-endian으로 변환
+            return ((uint)reversedLower << 16) | reversedUpper;
+        }
+
+
+
+        /// <summary>
+        /// 64bit Signed big-endian
+        /// </summary>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <returns></returns>
+        private long ConvertTo64BitBigEndian(string cell0, string cell1, string cell2, string cell3)
+        {
+            uint upperValue = ConvertTo32BitBigEndian(cell0, cell1, cell2, cell3);
+            uint lowerValue = ConvertTo32BitBigEndian(cell2, cell3, cell0, cell1);
+
+            ulong bigEndianValue = ((ulong)upperValue << 32) | lowerValue;
+
+            // Signed 처리
+            if ((bigEndianValue & 0x8000000000000000) != 0)
+            {
+                return unchecked((long)bigEndianValue);
+            }
+
+            return (long)bigEndianValue;
+        }
+
+        /// <summary>
+        /// 64bit Signed little-endian
+        /// </summary>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <returns></returns>
+        private long ConvertTo64BitLittleEndian(string cell2, string cell3, string cell0, string cell1)
+        {
+            uint upperValue = ConvertTo32BitLittleEndian(cell2, cell3, cell0, cell1);
+            uint lowerValue = ConvertTo32BitLittleEndian(cell0, cell1, cell2, cell3);
+
+            ulong littleEndianValue = ((ulong)lowerValue << 32) | upperValue;
+
+            // Signed 처리
+            if ((littleEndianValue & 0x8000000000000000) != 0)
+            {
+                return unchecked((long)littleEndianValue);
+            }
+
+            return (long)littleEndianValue;
+        }
+
+        private long ConvertTo64BitBigEndianByteSwap(string cell0, string cell1, string cell2, string cell3)
+        {
+            uint upperValue = ConvertTo32BitBigEndian(cell0, cell1, cell2, cell3);
+            uint lowerValue = ConvertTo32BitBigEndian(cell2, cell3, cell0, cell1);
+
+            ulong bigEndianValue = ((ulong)upperValue << 32) | lowerValue;
+
+            // Byte Swap
+            ulong swappedValue = ((bigEndianValue & 0xFF00000000000000) >> 8) |
+                                 ((bigEndianValue & 0x00FF000000000000) << 8) |
+                                 ((bigEndianValue & 0x0000FF0000000000) >> 8) |
+                                 ((bigEndianValue & 0x000000FF00000000) << 8) |
+                                 ((bigEndianValue & 0x00000000FF000000) >> 8) |
+                                 ((bigEndianValue & 0x0000000000FF0000) << 8) |
+                                 ((bigEndianValue & 0x000000000000FF00) >> 8) |
+                                 ((bigEndianValue & 0x00000000000000FF) << 8);
+
+            // Signed 처리
+            if ((swappedValue & 0x8000000000000000) != 0)
+            {
+                return unchecked((long)swappedValue);
+            }
+
+            return (long)swappedValue;
+        }
+
+        private long ConvertTo64BitLittleEndianByteSwap(string cell2, string cell3, string cell0, string cell1)
+        {
+            uint upperValue = ConvertTo32BitLittleEndian(cell2, cell3, cell0, cell1);
+            uint lowerValue = ConvertTo32BitLittleEndian(cell0, cell1, cell2, cell3);
+
+            ulong littleEndianValue = ((ulong)lowerValue << 32) | upperValue;
+
+            // Byte Swap
+            ulong swappedValue = ((littleEndianValue & 0xFF00000000000000) >> 8) |
+                                 ((littleEndianValue & 0x00FF000000000000) << 8) |
+                                 ((littleEndianValue & 0x0000FF0000000000) >> 8) |
+                                 ((littleEndianValue & 0x000000FF00000000) << 8) |
+                                 ((littleEndianValue & 0x00000000FF000000) >> 8) |
+                                 ((littleEndianValue & 0x0000000000FF0000) << 8) |
+                                 ((littleEndianValue & 0x000000000000FF00) >> 8) |
+                                 ((littleEndianValue & 0x00000000000000FF) << 8);
+
+            // Signed 처리
+            if ((swappedValue & 0x8000000000000000) != 0)
+            {
+                return unchecked((long)swappedValue);
+            }
+
+            return (long)swappedValue;
+        }
         private ushort ConvertToUnsigned16(string value)
         {
             int signedValue = ConvertToSigned(value);
@@ -446,7 +595,6 @@ namespace ModbusPoll
             {
                 throw new OverflowException("값이 16-bit 범위를 초과했습니다.");
             }
-
             return (ushort)signedValue;
         }
         /// <summary>
@@ -459,5 +607,8 @@ namespace ModbusPoll
             // 기본적으로 10진수로 처리
             return int.Parse(value);
         }
+
+        
+
     }
 }
