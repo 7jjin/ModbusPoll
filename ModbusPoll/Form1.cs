@@ -215,6 +215,11 @@ namespace ModbusPoll
                 string signelLittleEndian64Bit = Convert.ToString(ConvertTo64BitLittleEndian(firstCelData, secondData,thirdData,fourthData));
                 string signedBigEndian64BitByteSwap = Convert.ToString(ConvertTo64BitBigEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
                 string signedLittleEndian64BitByteSwap = Convert.ToString(ConvertTo64BitLittleEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
+
+                string unSignedBigEndian64Bit = Convert.ToString(ConvertTo64BitUnsignedBigEndian(firstCelData, secondData, thirdData, fourthData));
+                string unSignelLittleEndian64Bit = Convert.ToString(ConvertTo64UnsignedBitLittleEndian(firstCelData, secondData, thirdData, fourthData));
+                string unSignedBigEndian64BitByteSwap = Convert.ToString(ConvertTo64BitUnsignedBigEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
+                string unSignedLittleEndian64BitByteSwap = Convert.ToString(ConvertTo64BitUnsignedLittleEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
                 sb.AppendLine("----------------------------------------------------------------------------------------------------------------------------------------");
                 if (quantity == 2)
                 {
@@ -223,7 +228,7 @@ namespace ModbusPoll
                     sb.AppendLine($"32bit Signed big-endian Byte Swap : {signedBigEndian32BitByteSwap}");
                     sb.AppendLine($"32bit Signed little-endian Byte Swap : {signedLittleEndian32BitByteSwap}");
 
-                    sb.AppendLine("----------------------------------------------------------------------------------------------------------------------------------------");
+                    sb.AppendLine("------------------------------------------------------------------------------------------------------------------------------------");
 
                     sb.AppendLine($"32bit unSigned big-endian : {unSignedBigEndian32Bit}");
                     sb.AppendLine($"32bit unSigned little-endian : {unSignedLittleEndian32Bit}");
@@ -235,6 +240,13 @@ namespace ModbusPoll
                     sb.AppendLine($"64bit Signed little-endian : {signelLittleEndian64Bit}");
                     sb.AppendLine($"64bit Signed big-endian Byte Swap : {signedBigEndian64BitByteSwap}");
                     sb.AppendLine($"64bit Signed little-endian Byte Swap : {signedLittleEndian64BitByteSwap}");
+
+                    sb.AppendLine("------------------------------------------------------------------------------------------------------------------------------------");
+
+                    sb.AppendLine($"64bit unSigned big-endian : {unSignedBigEndian64Bit}");
+                    sb.AppendLine($"64bit unSigned little-endian : {unSignelLittleEndian64Bit}");
+                    sb.AppendLine($"64bit unSigned big-endian Byte Swap : {unSignedBigEndian64BitByteSwap}");
+                    sb.AppendLine($"64bit unSigned little-endian Byte Swap : {unSignedLittleEndian64BitByteSwap}");
                 }
                 
                 rtb_dataView.Text = sb.ToString();
@@ -320,6 +332,12 @@ namespace ModbusPoll
             return result;  // 결과 값 반환
         }
 
+        /// <summary>
+        /// 32bit Signed Little-endian Byte Swap
+        /// </summary>
+        /// <param name="firstCellData"></param>
+        /// <param name="secondCellData"></param>
+        /// <returns></returns>
         private long ConvertTo32BitLittleEndianByteSwap(string firstCellData, string secondCellData)
         {
             // 두 셀의 값을 16-bit로 읽어와 결합
@@ -441,44 +459,6 @@ namespace ModbusPoll
         }
 
         //---------------------------------------------------------64bit Singed------------------------------------------------------//
-        /// <summary>
-        /// 64bit big-endian, little-endian 정의 할 때 필요한 함수
-        /// </summary>
-        /// <param name="cell0"></param>
-        /// <param name="cell1"></param>
-        /// <param name="cell2"></param>
-        /// <param name="cell3"></param>
-        /// <returns></returns>
-        private uint ConvertTo32BitBigEndian(string cell0, string cell1, string cell2, string cell3)
-        {
-            ushort upperValue = ConvertToUnsigned16(cell0); // 상위 16비트
-            ushort lowerValue = ConvertToUnsigned16(cell1); // 하위 16비트
-
-            // Big-endian으로 변환
-            return ((uint)upperValue << 16) | lowerValue;
-        }
-
-        /// <summary>
-        /// 64bit big-endian, little-endian 정의 할 때 필요한 함수
-        /// </summary>
-        /// <param name="cell2"></param>
-        /// <param name="cell3"></param>
-        /// <param name="cell0"></param>
-        /// <param name="cell1"></param>
-        /// <returns></returns>
-        private uint ConvertTo32BitLittleEndian(string cell2, string cell3, string cell0, string cell1)
-        {
-            ushort upperValue = ConvertToUnsigned16(cell2); // 상위 16비트
-            ushort lowerValue = ConvertToUnsigned16(cell3); // 하위 16비트
-
-            // 각 16-bit 값을 little-endian 방식으로 바이트 순서를 바꿈
-            ushort reversedUpper = (ushort)((upperValue >> 8) | (upperValue << 8));
-            ushort reversedLower = (ushort)((lowerValue >> 8) | (lowerValue << 8));
-
-            // Little-endian으로 변환
-            return ((uint)reversedLower << 16) | reversedUpper;
-        }
-
 
 
         /// <summary>
@@ -529,6 +509,14 @@ namespace ModbusPoll
             return (long)littleEndianValue;
         }
 
+        /// <summary>
+        /// 64bit Signed Big-endian Byte Swap
+        /// </summary>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <returns></returns>
         private long ConvertTo64BitBigEndianByteSwap(string cell0, string cell1, string cell2, string cell3)
         {
             uint upperValue = ConvertTo32BitBigEndian(cell0, cell1, cell2, cell3);
@@ -555,6 +543,14 @@ namespace ModbusPoll
             return (long)swappedValue;
         }
 
+        /// <summary>
+        /// 64bit Signed Little-endian Byte Swap
+        /// </summary>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <returns></returns>
         private long ConvertTo64BitLittleEndianByteSwap(string cell2, string cell3, string cell0, string cell1)
         {
             uint upperValue = ConvertTo32BitLittleEndian(cell2, cell3, cell0, cell1);
@@ -580,6 +576,100 @@ namespace ModbusPoll
 
             return (long)swappedValue;
         }
+
+        //--------------------------------------------------------64bit Unsigned-----------------------------------------------------//
+        /// <summary>
+        /// 64bit Unsigned big-endian
+        /// </summary>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <returns></returns>
+        private ulong ConvertTo64BitUnsignedBigEndian(string cell0, string cell1, string cell2, string cell3)
+        {
+            uint upperValue = ConvertTo32BitBigEndianUnsigned(cell0, cell1, cell2, cell3);
+            uint lowerValue = ConvertTo32BitBigEndianUnsigned(cell2, cell3, cell0, cell1);
+
+            // Big-endian 64비트 값 생성
+            return ((ulong)upperValue << 32) | lowerValue;
+        }
+
+        /// <summary>
+        /// 64bit Unsigned little-endian
+        /// </summary>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <returns></returns>
+        private ulong ConvertTo64UnsignedBitLittleEndian(string cell2, string cell3, string cell0, string cell1)
+        {
+            uint upperValue = ConvertTo32BitLittleEndianUnsigned(cell2, cell3, cell0, cell1);
+            uint lowerValue = ConvertTo32BitLittleEndianUnsigned(cell0, cell1, cell2, cell3);
+
+            // Little-endian 64비트 값 생성
+            return ((ulong)lowerValue << 32) | upperValue;
+        }
+
+        /// <summary>
+        /// 64bit Unsigned Big-endian Byte Swap
+        /// </summary>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <returns></returns>
+        private ulong ConvertTo64BitUnsignedBigEndianByteSwap(string cell0, string cell1, string cell2, string cell3)
+        {
+            uint upperValue = ConvertTo32BitBigEndian(cell0, cell1, cell2, cell3);
+            uint lowerValue = ConvertTo32BitBigEndian(cell2, cell3, cell0, cell1);
+
+            ulong bigEndianValue = ((ulong)upperValue << 32) | lowerValue;
+
+            // Byte Swap
+            ulong swappedValue = ((bigEndianValue & 0xFF00000000000000) >> 8) |
+                                 ((bigEndianValue & 0x00FF000000000000) << 8) |
+                                 ((bigEndianValue & 0x0000FF0000000000) >> 8) |
+                                 ((bigEndianValue & 0x000000FF00000000) << 8) |
+                                 ((bigEndianValue & 0x00000000FF000000) >> 8) |
+                                 ((bigEndianValue & 0x0000000000FF0000) << 8) |
+                                 ((bigEndianValue & 0x000000000000FF00) >> 8) |
+                                 ((bigEndianValue & 0x00000000000000FF) << 8);
+
+            return swappedValue;
+        }
+
+        /// <summary>
+        /// 64bit Unsigned Little-endian Byte Swap
+        /// </summary>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <returns></returns>
+        private ulong ConvertTo64BitUnsignedLittleEndianByteSwap(string cell2, string cell3, string cell0, string cell1)
+        {
+            uint upperValue = ConvertTo32BitLittleEndian(cell2, cell3, cell0, cell1);
+            uint lowerValue = ConvertTo32BitLittleEndian(cell0, cell1, cell2, cell3);
+
+            ulong littleEndianValue = ((ulong)lowerValue << 32) | upperValue;
+
+            // Byte Swap
+            ulong swappedValue = ((littleEndianValue & 0xFF00000000000000) >> 8) |
+                                 ((littleEndianValue & 0x00FF000000000000) << 8) |
+                                 ((littleEndianValue & 0x0000FF0000000000) >> 8) |
+                                 ((littleEndianValue & 0x000000FF00000000) << 8) |
+                                 ((littleEndianValue & 0x00000000FF000000) >> 8) |
+                                 ((littleEndianValue & 0x0000000000FF0000) << 8) |
+                                 ((littleEndianValue & 0x000000000000FF00) >> 8) |
+                                 ((littleEndianValue & 0x00000000000000FF) << 8);
+
+            return swappedValue;
+        }
+
+
+        //-------------------------------------------------------32bit 정의 시 필요 함수--------------------------------------------//
         private ushort ConvertToUnsigned16(string value)
         {
             int signedValue = ConvertToSigned(value);
@@ -608,7 +698,66 @@ namespace ModbusPoll
             return int.Parse(value);
         }
 
-        
 
+
+        //-------------------------------------------------------64bit 정의 시 필요 함수--------------------------------------------//
+        /// <summary>
+        /// 64bit big-endian, little-endian 정의 할 때 필요한 함수
+        /// </summary>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <returns></returns>
+        private uint ConvertTo32BitBigEndian(string cell0, string cell1, string cell2, string cell3)
+        {
+            ushort upperValue = ConvertToUnsigned16(cell0); // 상위 16비트
+            ushort lowerValue = ConvertToUnsigned16(cell1); // 하위 16비트
+
+            // Big-endian으로 변환
+            return ((uint)upperValue << 16) | lowerValue;
+        }
+
+        /// <summary>
+        /// 64bit big-endian, little-endian 정의 할 때 필요한 함수
+        /// </summary>
+        /// <param name="cell2"></param>
+        /// <param name="cell3"></param>
+        /// <param name="cell0"></param>
+        /// <param name="cell1"></param>
+        /// <returns></returns>
+        private uint ConvertTo32BitLittleEndian(string cell2, string cell3, string cell0, string cell1)
+        {
+            ushort upperValue = ConvertToUnsigned16(cell2); // 상위 16비트
+            ushort lowerValue = ConvertToUnsigned16(cell3); // 하위 16비트
+
+            // 각 16-bit 값을 little-endian 방식으로 바이트 순서를 바꿈
+            ushort reversedUpper = (ushort)((upperValue >> 8) | (upperValue << 8));
+            ushort reversedLower = (ushort)((lowerValue >> 8) | (lowerValue << 8));
+
+            // Little-endian으로 변환
+            return ((uint)reversedLower << 16) | reversedUpper;
+        }
+        private uint ConvertTo32BitBigEndianUnsigned(string cell0, string cell1, string cell2, string cell3)
+        {
+            ushort upperValue = ConvertToUnsigned16(cell0); // 상위 16비트
+            ushort lowerValue = ConvertToUnsigned16(cell1); // 하위 16비트
+
+            // Big-endian으로 변환
+            return ((uint)upperValue << 16) | lowerValue;
+        }
+
+        private uint ConvertTo32BitLittleEndianUnsigned(string cell2, string cell3, string cell0, string cell1)
+        {
+            ushort upperValue = ConvertToUnsigned16(cell2); // 상위 16비트
+            ushort lowerValue = ConvertToUnsigned16(cell3); // 하위 16비트
+                                                            // 각 16-bit 값을 little-endian 방식으로 바이트 순서를 바꿈
+            ushort reversedUpper = (ushort)((upperValue >> 8) | (upperValue << 8));
+            ushort reversedLower = (ushort)((lowerValue >> 8) | (lowerValue << 8));
+
+            // Little-endian으로 변환
+            return ((uint)reversedLower << 16) | reversedUpper;
+
+        }
     }
 }
