@@ -198,17 +198,27 @@ namespace ModbusPoll
                 }
                 var firstCelData = dataView.Rows[0].Cells[1].Value.ToString();
                 var nextCell = dataView.Rows[1].Cells[1].Value.ToString();
-                string bigEndian32Bit = Convert.ToString(ConverTo32BitBigEndian(firstCelData, nextCell));
-                string littleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndian(firstCelData,nextCell));
-                string bigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwap(firstCelData, nextCell));
-                string littleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwap(firstCelData, nextCell));
+                string signedBigEndian32Bit = Convert.ToString(ConverTo32BitBigEndian(firstCelData, nextCell));
+                string signedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndian(firstCelData,nextCell));
+                string signedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwap(firstCelData, nextCell));
+                string signedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwap(firstCelData, nextCell));
+
+                string unSignedBigEndian32Bit = Convert.ToString(ConvertTo32BitUnsignedBigEndian(firstCelData, nextCell));
+                string unSignedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndianUnsigned(firstCelData, nextCell));
+                string unSignedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwapUnsigned(firstCelData, nextCell));
+                string unSignedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwapUnsigned(firstCelData, nextCell));
                 sb.AppendLine("----------------------------------------------------------------------------------------------------------------------------------------");
                 if (quantity == 2)
                 {
-                    sb.AppendLine($"32bit Signed big-endian : {bigEndian32Bit}");
-                    sb.AppendLine($"32bit Signed little-endian : {littleEndian32Bit}");
-                    sb.AppendLine($"32bit Signed big-endian Byte Swap : {bigEndian32BitByteSwap}");
-                    sb.AppendLine($"32bit Signed little-endian Byte Swap : {littleEndian32BitByteSwap}");
+                    sb.AppendLine($"32bit Signed big-endian : {signedBigEndian32Bit}");
+                    sb.AppendLine($"32bit Signed little-endian : {signedLittleEndian32Bit}");
+                    sb.AppendLine($"32bit Signed big-endian Byte Swap : {signedBigEndian32BitByteSwap}");
+                    sb.AppendLine($"32bit Signed little-endian Byte Swap : {signedLittleEndian32BitByteSwap}");
+
+                    sb.AppendLine($"32bit unSigned big-endian : {unSignedBigEndian32Bit}");
+                    sb.AppendLine($"32bit unSigned little-endian : {unSignedLittleEndian32Bit}");
+                    sb.AppendLine($"32bit unSigned big-endian Byte Swap : {unSignedBigEndian32BitByteSwap}");
+                    sb.AppendLine($"32bit unSigned little-endian Byte Swap : {unSignedLittleEndian32BitByteSwap}");
                 }
                 
                 rtb_dataView.Text = sb.ToString();
@@ -219,6 +229,7 @@ namespace ModbusPoll
             }
         }
 
+        //---------------------------------------------------------- 32bit Signed -------------------------------------------------// 
 
         /// <summary>
         /// 32bit Signed big-endian
@@ -320,6 +331,105 @@ namespace ModbusPoll
             int result = unchecked((int)swappedValue);
             return result;  // 결과 값 반환
         }
+
+        //---------------------------------------------------------- 32bitUnsigned -------------------------------------------------// 
+
+        /// <summary>
+        /// 32bit Unsigned big-endian
+        /// </summary>
+        /// <param name="firstCellData"></param>
+        /// <param name="secondCellData"></param>
+        /// <returns></returns>
+        private ulong ConvertTo32BitUnsignedBigEndian(string firstCellData, string secondCellData)
+        {
+            // 두 셀의 값을 16-bit로 읽어와 결합
+            ushort upperValue = ConvertToUnsigned16(firstCellData);
+            ushort lowerValue = ConvertToUnsigned16(secondCellData);
+
+            // Big-endian으로 변환
+            ulong bigEndianValue = ((ulong)upperValue << 16) | lowerValue;
+
+            // Unsigned의 경우, 별도의 부호 처리 없이 그대로 반환
+            return bigEndianValue;
+        }
+
+        /// <summary>
+        /// 32bit Unsigned little-endian
+        /// </summary>
+        /// <param name="firstCellData"></param>
+        /// <param name="secondCellData"></param>
+        /// <returns></returns>
+        private ulong ConvertTo32BitLittleEndianUnsigned(string firstCellData, string secondCellData)
+        {
+            // 두 셀의 값을 16-bit로 읽어와 결합
+            ushort upperValue = ConvertToUnsigned16(firstCellData);
+            ushort lowerValue = ConvertToUnsigned16(secondCellData);
+
+            // 각 16-bit 값을 little-endian 방식으로 바이트 순서를 바꿈
+            ushort reversedUpper = (ushort)((upperValue >> 8) | (upperValue << 8));
+            ushort reversedLower = (ushort)((lowerValue >> 8) | (lowerValue << 8));
+
+            // Little-endian으로 변환 (값 순서 반대로)
+            ulong littleEndianValue = ((ulong)reversedLower << 16) | reversedUpper;
+
+            // Unsigned의 경우, 별도의 부호 처리 없이 그대로 반환
+            return littleEndianValue;
+        }
+
+        /// <summary>
+        /// 32bit Unsigned big-endian Byte swap
+        /// </summary>
+        /// <param name="firstCellData"></param>
+        /// <param name="secondCellData"></param>
+        /// <returns></returns>
+        private ulong ConvertTo32BitBigEndianByteSwapUnsigned(string firstCellData, string secondCellData)
+        {
+            // 두 셀의 값을 16-bit로 읽어오기
+            ushort upperValue = ConvertToUnsigned16(firstCellData);  // 예: 1111 -> 0x0457
+            ushort lowerValue = ConvertToUnsigned16(secondCellData); // 예: 2222 -> 0x08AE
+
+            // Big-endian으로 결합: upperValue가 상위 비트로, lowerValue가 하위 비트로 결합
+            uint bigEndianValue = ((uint)upperValue << 16) | lowerValue; // 0x0457 08AE
+
+            // Byte Swap 수행: 각 바이트의 순서를 뒤집음
+            uint swappedValue = ((bigEndianValue & 0xFF000000) >> 8) |  // 상위 8비트 -> 두 번째 상위 8비트로 이동
+                                ((bigEndianValue & 0x00FF0000) << 8) |  // 두 번째 상위 8비트 -> 상위 8비트로 이동
+                                ((bigEndianValue & 0x0000FF00) >> 8) |  // 세 번째 상위 8비트 -> 하위 8비트로 이동
+                                ((bigEndianValue & 0x000000FF) << 8);    // 하위 8비트 -> 세 번째 상위 8비트로 이동
+
+            // Unsigned 값으로 반환
+            return (ulong)swappedValue;  // 결과 값 반환
+        }
+
+        /// <summary>
+        /// 32bit Unsigned little-endian Byte swap
+        /// </summary>
+        /// <param name="firstCellData"></param>
+        /// <param name="secondCellData"></param>
+        /// <returns></returns>
+        private ulong ConvertTo32BitLittleEndianByteSwapUnsigned(string firstCellData, string secondCellData)
+        {
+            // 두 셀의 값을 16-bit로 읽어와 결합
+            ushort upperValue = ConvertToUnsigned16(firstCellData);
+            ushort lowerValue = ConvertToUnsigned16(secondCellData);
+
+            // 각 16-bit 값을 little-endian 방식으로 바이트 순서를 바꿈
+            ushort reversedUpper = (ushort)((upperValue >> 8) | (upperValue << 8));
+            ushort reversedLower = (ushort)((lowerValue >> 8) | (lowerValue << 8));
+
+            // Little-endian으로 변환 (값 순서 반대로)
+            uint littleEndianValue = ((uint)reversedLower << 16) | reversedUpper;
+
+            // Byte Swap 수행: 각 바이트의 순서를 뒤집음
+            uint swappedValue = ((littleEndianValue & 0xFF000000) >> 8) |  // 상위 8비트 -> 두 번째 상위 8비트로 이동
+                                ((littleEndianValue & 0x00FF0000) << 8) |  // 두 번째 상위 8비트 -> 상위 8비트로 이동
+                                ((littleEndianValue & 0x0000FF00) >> 8) |  // 세 번째 상위 8비트 -> 하위 8비트로 이동
+                                ((littleEndianValue & 0x000000FF) << 8);    // 하위 8비트 -> 세 번째 상위 8비트로 이동
+
+            // Unsigned 값으로 반환
+            return (ulong)swappedValue;  // 결과 값 반환
+        }
+
 
         private ushort ConvertToUnsigned16(string value)
         {
