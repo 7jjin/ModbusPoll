@@ -158,7 +158,7 @@ namespace ModbusPoll.Services
             }
             else
             {
-                int value = ConvertToSigned(selectedCell.Value.ToString()); // 먼저 10진수로 변환
+                int value = ConvertToUnsigned16(selectedCell.Value.ToString()); // 먼저 10진수로 변환
                 selectedCell.Value = $"0x{value:X4}"; // 16진수로 변환
                 _selectedDataType = "Hex";
             }
@@ -189,7 +189,13 @@ namespace ModbusPoll.Services
             else
             {
                 int binaryValue = ConvertToSigned(selectedCell.Value.ToString());
-                selectedCell.Value = Convert.ToString(binaryValue, 2); // 2진수로 변환
+
+                // 음수일 경우 상위 비트(부호 비트)를 제외한 15자리 이진수로 변환
+                string binaryString = binaryValue < 0
+                    ? Convert.ToString((ushort)binaryValue, 2).PadLeft(15, '0') // 부호 비트를 제외하고 15자리로 맞춤
+                    : Convert.ToString(binaryValue, 2).PadLeft(16, '0'); // 양수는 16자리로 맞춤
+
+                selectedCell.Value = binaryString;
                 _selectedDataType = "Binary";
             }
         }
@@ -205,14 +211,14 @@ namespace ModbusPoll.Services
                 return int.Parse(value.Substring(2), NumberStyles.HexNumber);
             }
             // 이진수 처리
-            else if (value.All(c => c == '0' || c == '1'))
+            else if (value.All(c => c == '0' || c == '1') && (value.Length == 8 || value.Length == 16))
             {
                 return Convert.ToInt32(value, 2);
             }
             // ASCII 문자 처리
-            else if (value.Length == 1 && char.IsLetterOrDigit(value[0]))
+            else if (value.Length == 1 && !char.IsDigit(value[0]) && char.IsLetterOrDigit(value[0]))
             {
-                return (int)value[0];
+                return (int)value[0]; // 문자 -> ASCII 코드 변환
             }
             // 기본적으로 10진수로 처리
             return int.Parse(value);

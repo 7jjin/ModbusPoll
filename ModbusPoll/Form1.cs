@@ -31,6 +31,7 @@ namespace ModbusPoll
 
             dataView.MouseDown += DataView_MouseDown;
             txt_ReadAddress.TextChanged += Txt_ReadAddress_TextChanged;
+            txt_WriteAddress.TextChanged += Txt_WriteAddress_TextChanged;
         }
 
         /// <summary>
@@ -47,6 +48,28 @@ namespace ModbusPoll
 
                 // 계산 결과를 Label에 표시
                 lbl_ReadPlcAddress.Text = result.ToString();
+            }
+            else
+            {
+                // 변환이 실패하면 에러 메시지 표시
+                MessageBox.Show("올바른 숫자를 입력하세요.");
+            }
+        }
+
+        /// <summary>
+        /// WriteAddress 텍스트 박스의 입력값이 바뀔 때마다 PLC Label값도 바뀜
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Txt_WriteAddress_TextChanged(object sender, EventArgs e)
+        {
+            if (ushort.TryParse(txt_WriteAddress.Text, out ushort inputValue))
+            {
+                // 40001을 더한 값 계산
+                int result = inputValue + 40001;
+
+                // 계산 결과를 Label에 표시
+                lbl_WritePlcAddress.Text = result.ToString();
             }
             else
             {
@@ -160,8 +183,8 @@ namespace ModbusPoll
                     return;
                 }
                 var data = await _modbusConnection.ReadHoldingRegistersAsync(startAddress, quantity);
-                dataView.Rows.Clear();
-                rtb_dataView.Clear();
+                //dataView.Rows.Clear();
+                //rtb_dataView.Clear();
 
                 StringBuilder sb = new StringBuilder();
 
@@ -183,8 +206,9 @@ namespace ModbusPoll
                     }
 
                     // DataGridView 2열에 값 저장 
-                    dataView.Rows.Add(new object[] { i + startAddress, displayedValue });
-                    dataView.AllowUserToAddRows = false;
+                    //dataView.Rows.Add(new object[] { i + startAddress, displayedValue });
+                    dataView.Rows[i].Cells[1].Value = displayedValue;
+                    dataView.AllowUserToAddRows = true;
 
                     // 32bit big-endian 값 저장
                     //string bigEndian = Convert.ToString(ConverToBigEndian(data[i], data[i+1]));
@@ -220,7 +244,7 @@ namespace ModbusPoll
                 string unSignelLittleEndian64Bit = Convert.ToString(ConvertTo64UnsignedBitLittleEndian(firstCelData, secondData, thirdData, fourthData));
                 string unSignedBigEndian64BitByteSwap = Convert.ToString(ConvertTo64BitUnsignedBigEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
                 string unSignedLittleEndian64BitByteSwap = Convert.ToString(ConvertTo64BitUnsignedLittleEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
-                sb.AppendLine("----------------------------------------------------------------------------------------------------------------------------------------");
+                sb.AppendLine("--------------------------------------------------------------------------------------------------------------------------------------");
                 if (quantity == 2)
                 {
                     sb.AppendLine($"32bit Signed big-endian : {signedBigEndian32Bit}");
@@ -241,7 +265,7 @@ namespace ModbusPoll
                     sb.AppendLine($"64bit Signed big-endian Byte Swap : {signedBigEndian64BitByteSwap}");
                     sb.AppendLine($"64bit Signed little-endian Byte Swap : {signedLittleEndian64BitByteSwap}");
 
-                    sb.AppendLine("------------------------------------------------------------------------------------------------------------------------------------");
+                    sb.AppendLine("--------------------------------------------------------------------------------------------------------------------------------------");
 
                     sb.AppendLine($"64bit unSigned big-endian : {unSignedBigEndian64Bit}");
                     sb.AppendLine($"64bit unSigned little-endian : {unSignelLittleEndian64Bit}");
@@ -254,6 +278,71 @@ namespace ModbusPoll
             catch (Exception ex)
             {
                 MessageBox.Show("02 Illegal Data Address");
+            }
+        }
+
+        /// <summary>
+        /// Slave로 데이터 쓰기
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void btnWriteData_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ushort startAddress;
+                if (!ushort.TryParse(txt_WriteAddress.Text, out startAddress))
+                {
+                    MessageBox.Show("올바른 주소 값을 입력해주세요.");
+                    return;
+                }
+                ushort quantity;
+                if (!ushort.TryParse(txt_WriteQuantity.Text, out quantity))
+                {
+                    MessageBox.Show("올바른 수량 값을 입력해주세요.");
+                    return;
+                }
+
+                ushort[] valuesToWrite = new ushort[quantity];
+                for (int i = 0; i < quantity; i++)
+                {
+                    string cellValue = dataView.Rows[i].Cells[1].Value?.ToString();
+                    if (string.IsNullOrEmpty(cellValue))
+                    {
+                        MessageBox.Show("입력한 수량의 모든 셀에 데이터를 입력해주세요.");
+                        return;
+                    }
+
+                    ushort unsignedValue;
+                    if (cellValue.StartsWith("0x"))
+                    {
+                        unsignedValue = ushort.Parse(cellValue.Substring(2), NumberStyles.HexNumber);
+                    }
+                    else if (short.TryParse(cellValue, out short signedValue))
+                    {
+                        unsignedValue = (ushort)signedValue;
+                    }
+                    else if (cellValue.All(c => c == '0' || c == '1') && (cellValue.Length == 8 || cellValue.Length == 16))
+                    {
+                        unsignedValue = Convert.ToUInt16(cellValue.Substring(2), 2);
+                    }
+                    else if (!ushort.TryParse(cellValue, out unsignedValue))
+                    {
+                        MessageBox.Show("데이터 형식이 올바르지 않습니다.");
+                        return;
+                    }
+                    
+                    
+                    valuesToWrite[i] = unsignedValue;
+                }
+
+                // Slave에 데이터 쓰기 (Function code 16번 사용)
+                await _modbusConnection.WriteHoldingRegistersAsync(startAddress, valuesToWrite);
+                MessageBox.Show("데이터가 성공적으로 전송되었습니다.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -759,5 +848,7 @@ namespace ModbusPoll
             return ((uint)reversedLower << 16) | reversedUpper;
 
         }
+
+        
     }
 }

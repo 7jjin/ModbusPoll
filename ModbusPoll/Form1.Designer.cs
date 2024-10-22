@@ -255,6 +255,7 @@
             this.btnWriteData.TabIndex = 14;
             this.btnWriteData.Text = "Write";
             this.btnWriteData.UseVisualStyleBackColor = true;
+            this.btnWriteData.Click += new System.EventHandler(this.btnWriteData_Click);
             // 
             // label2
             // 

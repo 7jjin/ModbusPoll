@@ -50,5 +50,24 @@ namespace ModbusPoll.Services
             }
             return await _modbusMaster.ReadHoldingRegistersAsync(1,startAddress, quantity);
         }
+
+        public async Task WriteHoldingRegistersAsync(ushort startAddress, ushort[] values)
+        {
+            if (_modbusMaster == null)
+            {
+                throw new InvalidOperationException("ModbusMaster is not connected.");
+            }
+
+            try
+            {
+                await _modbusMaster.WriteMultipleRegistersAsync(1, startAddress, values);
+                Console.WriteLine("Successfully wrote data to the Modbus Slave.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to write data: {ex.Message}");
+                throw;
+            }
+        }
     }
 }

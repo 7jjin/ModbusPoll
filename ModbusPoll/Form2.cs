@@ -26,6 +26,11 @@ namespace ModbusPoll
             };
         }
 
+        /// <summary>
+        /// 유효성 검사 함수
+        /// </summary>
+        /// <param name="dataType"></param>
+        /// <returns></returns>
         private bool ValidateInput(string dataType)
         {
             // 유효성 검사
