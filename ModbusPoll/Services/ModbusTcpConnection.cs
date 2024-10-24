@@ -57,7 +57,6 @@ namespace ModbusPoll.Services
             {
                 throw new InvalidOperationException("ModbusMaster is not connected.");
             }
-
             try
             {
                 await _modbusMaster.WriteMultipleRegistersAsync(1, startAddress, values);

@@ -33,7 +33,6 @@
             this.lbl_ReadTest = new System.Windows.Forms.Label();
             this.lbl_IpAddress = new System.Windows.Forms.Label();
             this.lbl_Port = new System.Windows.Forms.Label();
-            this.txt_IpAddress = new System.Windows.Forms.TextBox();
             this.txt_Port = new System.Windows.Forms.TextBox();
             this.btnConnect = new System.Windows.Forms.Button();
             this.btnDisconnect = new System.Windows.Forms.Button();
@@ -54,6 +53,7 @@
             this.lbl_WritePlcAddress = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.rtb_dataView = new System.Windows.Forms.RichTextBox();
+            this.txt_IpAddress = new System.Windows.Forms.MaskedTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -112,14 +112,6 @@
             this.lbl_Port.Size = new System.Drawing.Size(34, 15);
             this.lbl_Port.TabIndex = 1;
             this.lbl_Port.Text = "Port";
-            // 
-            // txt_IpAddress
-            // 
-            this.txt_IpAddress.Location = new System.Drawing.Point(118, 21);
-            this.txt_IpAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txt_IpAddress.Name = "txt_IpAddress";
-            this.txt_IpAddress.Size = new System.Drawing.Size(106, 25);
-            this.txt_IpAddress.TabIndex = 2;
             // 
             // txt_Port
             // 
@@ -303,12 +295,20 @@
             this.rtb_dataView.TabIndex = 25;
             this.rtb_dataView.Text = "";
             // 
+            // txt_IpAddress
+            // 
+            this.txt_IpAddress.Location = new System.Drawing.Point(117, 24);
+            this.txt_IpAddress.Name = "txt_IpAddress";
+            this.txt_IpAddress.Size = new System.Drawing.Size(106, 25);
+            this.txt_IpAddress.TabIndex = 26;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1035, 785);
+            this.Controls.Add(this.txt_IpAddress);
             this.Controls.Add(this.rtb_dataView);
             this.Controls.Add(this.lbl_WritePlcAddress);
             this.Controls.Add(this.label5);
@@ -332,7 +332,6 @@
             this.Controls.Add(this.btnDisconnect);
             this.Controls.Add(this.btnConnect);
             this.Controls.Add(this.txt_Port);
-            this.Controls.Add(this.txt_IpAddress);
             this.Controls.Add(this.lbl_Port);
             this.Controls.Add(this.lbl_IpAddress);
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -351,7 +350,6 @@
         private System.Windows.Forms.Label lbl_ReadTest;
         private System.Windows.Forms.Label lbl_IpAddress;
         private System.Windows.Forms.Label lbl_Port;
-        private System.Windows.Forms.TextBox txt_IpAddress;
         private System.Windows.Forms.TextBox txt_Port;
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.Button btnDisconnect;
@@ -372,6 +370,7 @@
         private System.Windows.Forms.Label lbl_WritePlcAddress;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.RichTextBox rtb_dataView;
+        private System.Windows.Forms.MaskedTextBox txt_IpAddress;
     }
 }
 

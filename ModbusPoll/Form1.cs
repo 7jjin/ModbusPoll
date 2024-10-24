@@ -25,6 +25,7 @@ namespace ModbusPoll
         {
             InitializeComponent();
             this.Text = "Modbus Poll";
+            this.ActiveControl = txt_IpAddress;
             _modbusConnection = modbusConnection;
             _dataViewService = dataViewService;
             _contextMenuService = contextMenuService;
@@ -32,7 +33,13 @@ namespace ModbusPoll
             dataView.MouseDown += DataView_MouseDown;
             txt_ReadAddress.TextChanged += Txt_ReadAddress_TextChanged;
             txt_WriteAddress.TextChanged += Txt_WriteAddress_TextChanged;
+            txt_IpAddress.Validating += txt_IpAddress_Validating;
+            txt_IpAddress.Leave += Txt_IpAddress_Leave;
+
+            txt_IpAddress.Mask = "990.990.990.990";
         }
+
+        
 
         /// <summary>
         /// ReadAddress 텍스트 박스의 입력값이 바뀔 때마다 PLC Label값도 바뀜
@@ -77,6 +84,43 @@ namespace ModbusPoll
                 MessageBox.Show("올바른 숫자를 입력하세요.");
             }
         }
+
+        /// <summary>
+        /// Txt_IPAddress Mask 유효성 검사
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txt_IpAddress_Validating(object sender, CancelEventArgs e)
+        {
+            string[] parts = txt_IpAddress.Text.Split('.');
+            foreach (var part in parts)
+            {
+                if(int.TryParse(part,out int num))
+                {
+                    if(num <0 || num > 255)
+                    {
+                        MessageBox.Show("IP 주소의 각 섹션은 0에서 255 사이의 숫자여야 합니다.");
+                        e.Cancel = true;
+                    }
+                }
+                
+            }
+        }
+
+        /// <summary>
+        /// Txt_IpAddress 기본값
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Txt_IpAddress_Leave(object sender, EventArgs e)
+        {
+            if (txt_IpAddress.Text.Trim().Length == 0)
+            {
+                txt_IpAddress.Text = "000.000.000.000";
+            }
+        }
+
+
 
         /// <summary>
         /// Modbus Tcp 연결
@@ -129,7 +173,6 @@ namespace ModbusPoll
             txt_ReadQuantity.Text = "10";  
             txt_WriteAddress.Text = "0";
             txt_WriteQuantity.Text = "10";
-
         }
 
 
@@ -168,6 +211,7 @@ namespace ModbusPoll
         /// <param name="e"></param>
         private async void btnReadData_Click(object sender, EventArgs e)
         {
+            string currentTime = DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]");
             try
             {
                 ushort startAddress;
@@ -216,7 +260,7 @@ namespace ModbusPoll
                     // RichTextView에 값 입력
                     string hexValue = $"0x{data[i]:X4}";
                     string binaryValue = Convert.ToString(data[i], 2).PadLeft(16, '0');
-                    sb.AppendLine($"Address: {i + startAddress}\tSigned -> {signedValue}\tUnsigned -> {data[i]}\tHex -> {hexValue}\tBinary -> {FormatBinary(binaryValue)}");
+                    sb.AppendLine($"{currentTime}\t Address: {i + startAddress}\t Signed -> {signedValue}\t Unsigned -> {data[i]}\t Hex -> {hexValue}\t Binary -> {FormatBinary(binaryValue)}");
                     
                     //sb.AppendLine($"32bit Signed big-endian : {bigEndian}");
                 }
@@ -247,30 +291,30 @@ namespace ModbusPoll
                 sb.AppendLine("--------------------------------------------------------------------------------------------------------------------------------------");
                 if (quantity == 2)
                 {
-                    sb.AppendLine($"32bit Signed big-endian : {signedBigEndian32Bit}");
-                    sb.AppendLine($"32bit Signed little-endian : {signedLittleEndian32Bit}");
-                    sb.AppendLine($"32bit Signed big-endian Byte Swap : {signedBigEndian32BitByteSwap}");
-                    sb.AppendLine($"32bit Signed little-endian Byte Swap : {signedLittleEndian32BitByteSwap}");
+                    sb.AppendLine($"{currentTime}\t 32bit Signed big-endian : {signedBigEndian32Bit}");
+                    sb.AppendLine($"{currentTime}\t 32bit Signed little-endian : {signedLittleEndian32Bit}");
+                    sb.AppendLine($"{currentTime}\t 32bit Signed big-endian Byte Swap : {signedBigEndian32BitByteSwap}");
+                    sb.AppendLine($"{currentTime}\t 32bit Signed little-endian Byte Swap : {signedLittleEndian32BitByteSwap}");
 
                     sb.AppendLine("------------------------------------------------------------------------------------------------------------------------------------");
 
-                    sb.AppendLine($"32bit unSigned big-endian : {unSignedBigEndian32Bit}");
-                    sb.AppendLine($"32bit unSigned little-endian : {unSignedLittleEndian32Bit}");
-                    sb.AppendLine($"32bit unSigned big-endian Byte Swap : {unSignedBigEndian32BitByteSwap}");
-                    sb.AppendLine($"32bit unSigned little-endian Byte Swap : {unSignedLittleEndian32BitByteSwap}");
+                    sb.AppendLine($"{currentTime}\t 32bit unSigned big-endian : {unSignedBigEndian32Bit}");
+                    sb.AppendLine($"{currentTime}\t 32bit unSigned little-endian : {unSignedLittleEndian32Bit}");
+                    sb.AppendLine($"{currentTime}\t 32bit unSigned big-endian Byte Swap : {unSignedBigEndian32BitByteSwap}");
+                    sb.AppendLine($"{currentTime}\t 32bit unSigned little-endian Byte Swap : {unSignedLittleEndian32BitByteSwap}");
                 }else if(quantity == 4)
                 {
-                    sb.AppendLine($"64bit Signed big-endian : {signedBigEndian64Bit}");
-                    sb.AppendLine($"64bit Signed little-endian : {signelLittleEndian64Bit}");
-                    sb.AppendLine($"64bit Signed big-endian Byte Swap : {signedBigEndian64BitByteSwap}");
-                    sb.AppendLine($"64bit Signed little-endian Byte Swap : {signedLittleEndian64BitByteSwap}");
+                    sb.AppendLine($"{currentTime}\t 64bit Signed big-endian : {signedBigEndian64Bit}");
+                    sb.AppendLine($"{currentTime}\t 64bit Signed little-endian : {signelLittleEndian64Bit}");
+                    sb.AppendLine($"{currentTime}\t 64bit Signed big-endian Byte Swap : {signedBigEndian64BitByteSwap}");
+                    sb.AppendLine($"{currentTime}\t 64bit Signed little-endian Byte Swap : {signedLittleEndian64BitByteSwap}");
 
                     sb.AppendLine("--------------------------------------------------------------------------------------------------------------------------------------");
 
-                    sb.AppendLine($"64bit unSigned big-endian : {unSignedBigEndian64Bit}");
-                    sb.AppendLine($"64bit unSigned little-endian : {unSignelLittleEndian64Bit}");
-                    sb.AppendLine($"64bit unSigned big-endian Byte Swap : {unSignedBigEndian64BitByteSwap}");
-                    sb.AppendLine($"64bit unSigned little-endian Byte Swap : {unSignedLittleEndian64BitByteSwap}");
+                    sb.AppendLine($"{currentTime}\t 64bit unSigned big-endian : {unSignedBigEndian64Bit}");
+                    sb.AppendLine($"{currentTime}\t 64bit unSigned little-endian : {unSignelLittleEndian64Bit}");
+                    sb.AppendLine($"{currentTime}\t 64bit unSigned big-endian Byte Swap : {unSignedBigEndian64BitByteSwap}");
+                    sb.AppendLine($"{currentTime}\t 64bit unSigned little-endian Byte Swap : {unSignedLittleEndian64BitByteSwap}");
                 }
                 
                 rtb_dataView.Text = sb.ToString();
@@ -848,7 +892,5 @@ namespace ModbusPoll
             return ((uint)reversedLower << 16) | reversedUpper;
 
         }
-
-        
     }
 }

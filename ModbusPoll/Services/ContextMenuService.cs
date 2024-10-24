@@ -29,22 +29,22 @@ namespace ModbusPoll.Services
             var unsignedItem = _contextMenuStrip.Items.Add("Unsigned");
             var hexItem = _contextMenuStrip.Items.Add("Hex");
             var binaryItem = _contextMenuStrip.Items.Add("Binary");
-            var signed32Item = new ToolStripMenuItem("32-bit Signed");
-            var unsigned32Item = new ToolStripMenuItem("32-bit Unsigned");
-            var signed64Item = new ToolStripMenuItem("64-bit Signed");
-            var unsigned64Item = new ToolStripMenuItem("64-bit Unsigned");
+            //var signed32Item = new ToolStripMenuItem("32-bit Signed");
+            //var unsigned32Item = new ToolStripMenuItem("32-bit Unsigned");
+            //var signed64Item = new ToolStripMenuItem("64-bit Signed");
+            //var unsigned64Item = new ToolStripMenuItem("64-bit Unsigned");
 
-            // 서브 메뉴를 각 항목에 추가
-            AddEndianSubMenu(signed32Item);
-            AddEndianSubMenu(unsigned32Item);
-            AddEndianSubMenu(signed64Item);
-            AddEndianSubMenu(unsigned64Item);
+            //// 서브 메뉴를 각 항목에 추가
+            //AddEndianSubMenu(signed32Item);
+            //AddEndianSubMenu(unsigned32Item);
+            //AddEndianSubMenu(signed64Item);
+            //AddEndianSubMenu(unsigned64Item);
 
-            // ContextMenuStrip에 항목 추가
-            _contextMenuStrip.Items.Add(signed32Item);
-            _contextMenuStrip.Items.Add(unsigned32Item);
-            _contextMenuStrip.Items.Add(signed64Item);
-            _contextMenuStrip.Items.Add(unsigned64Item);
+            //// ContextMenuStrip에 항목 추가
+            //_contextMenuStrip.Items.Add(signed32Item);
+            //_contextMenuStrip.Items.Add(unsigned32Item);
+            //_contextMenuStrip.Items.Add(signed64Item);
+            //_contextMenuStrip.Items.Add(unsigned64Item);
 
             // 기존 메뉴 클릭 이벤트 등록
             signedItem.Click += OnSignedClick;
