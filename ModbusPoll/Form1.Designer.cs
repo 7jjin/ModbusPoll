@@ -299,7 +299,7 @@
             // 
             this.txt_IpAddress.Location = new System.Drawing.Point(117, 24);
             this.txt_IpAddress.Name = "txt_IpAddress";
-            this.txt_IpAddress.Size = new System.Drawing.Size(106, 25);
+            this.txt_IpAddress.Size = new System.Drawing.Size(132, 25);
             this.txt_IpAddress.TabIndex = 26;
             // 
             // Form1

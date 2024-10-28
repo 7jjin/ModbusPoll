@@ -20,6 +20,7 @@ namespace ModbusPoll
         private ModbusConnectionSettings _settings;
         private readonly IDataViewService _dataViewService;
         private readonly IContextMenuService _contextMenuService;
+        private List<CellData> _cellDataList;
 
         public Form1(IModbusConnection modbusConnection, IDataViewService dataViewService, IContextMenuService contextMenuService)
         {
@@ -37,6 +38,8 @@ namespace ModbusPoll
             txt_IpAddress.Leave += Txt_IpAddress_Leave;
 
             txt_IpAddress.Mask = "990.990.990.990";
+
+            _cellDataList = new List<CellData>();
         }
 
         
@@ -166,8 +169,7 @@ namespace ModbusPoll
             // Data Load
             _dataViewService.LoadData(dataView);
 
-            // 첫 번째 열에 대한 유효성 검사 추가
-            _dataViewService.AddKeyPressValidation(dataView);
+          
 
             txt_ReadAddress.Text = "0";
             txt_ReadQuantity.Text = "10";  
@@ -183,7 +185,19 @@ namespace ModbusPoll
         /// <param name="e"></param>
         private void DataView_MouseDown(object sender, MouseEventArgs e)
         {
-            _contextMenuService.ShowContextMenu(dataView, e);
+            if (e.Button == MouseButtons.Right)
+            {
+                var hitTestInfo = dataView.HitTest(e.X, e.Y);
+                if (hitTestInfo.Type == DataGridViewHitTestType.Cell && hitTestInfo.ColumnIndex == 1)
+                {
+                    int rowIndex = hitTestInfo.RowIndex;
+                    int columnIndex = hitTestInfo.ColumnIndex;
+
+                    _contextMenuService.ShowContextMenu(dataView, rowIndex, columnIndex);
+
+                }
+            }
+
         }
 
         /// <summary>
@@ -237,6 +251,7 @@ namespace ModbusPoll
                     // Signed 범위 값 처리
                     int signedValue = (short)data[i]; // 16-bit Signed 처리
                     string displayedValue;
+                    
 
                     if (signedValue < -32768 || signedValue > 32767)
                     {
@@ -253,6 +268,8 @@ namespace ModbusPoll
                     //dataView.Rows.Add(new object[] { i + startAddress, displayedValue });
                     dataView.Rows[i].Cells[1].Value = displayedValue;
                     dataView.AllowUserToAddRows = true;
+
+                    
 
                     // 32bit big-endian 값 저장
                     //string bigEndian = Convert.ToString(ConverToBigEndian(data[i], data[i+1]));
@@ -316,7 +333,7 @@ namespace ModbusPoll
                     sb.AppendLine($"{currentTime}\t 64bit unSigned big-endian Byte Swap : {unSignedBigEndian64BitByteSwap}");
                     sb.AppendLine($"{currentTime}\t 64bit unSigned little-endian Byte Swap : {unSignedLittleEndian64BitByteSwap}");
                 }
-                
+                _dataViewService.SetCellsToSigned(data.Length-1);
                 rtb_dataView.Text = sb.ToString();
             }
             catch (Exception ex)

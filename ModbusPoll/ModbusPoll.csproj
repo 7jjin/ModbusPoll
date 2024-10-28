@@ -64,6 +64,8 @@
     <Compile Include="Interfaces\IContextMenuService.cs" />
     <Compile Include="Interfaces\IDataViewService.cs" />
     <Compile Include="Interfaces\IModbusConnection.cs" />
+    <Compile Include="Models\CellData.cs" />
+    <Compile Include="Models\DataType.cs" />
     <Compile Include="Models\ModbusConnectionSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

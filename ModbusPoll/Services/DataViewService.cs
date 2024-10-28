@@ -1,6 +1,8 @@
 ﻿using ModbusPoll.Interfaces;
+using ModbusPoll.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
@@ -13,9 +15,11 @@ namespace ModbusPoll.Services
     {
         private readonly ContextMenuService _contextMenuService;
         private DataGridView _dataView;
+        private List<CellData> _cellDataList;
         public DataViewService(ContextMenuService contextMenuService)
         {
             _contextMenuService = contextMenuService;
+            _cellDataList = new List<CellData>();
         }
 
         /// <summary>
@@ -32,8 +36,8 @@ namespace ModbusPoll.Services
             for (int i = 0; i < 9; i++)
             {
                 dataView.Rows.Add();
+                _cellDataList.Add(new CellData(i, DataType.Signed, 0));    //초기값 Signed, 0 으로 설정
             }
-            dataView.CellValidating += DataView_CellValidating;
             dataView.CellDoubleClick += dataGridView_CellDoubleClick;
         }
 
@@ -51,6 +55,8 @@ namespace ModbusPoll.Services
             }
         }
 
+        
+
         /// <summary>
         /// Cell 더블 클릭 시 발생하는 함수
         /// </summary>
@@ -60,126 +66,131 @@ namespace ModbusPoll.Services
         {
             if (e.ColumnIndex == 1) // 예를 들어, 두 번째 열이 데이터 입력 열이라고 가정
             {
-                Form2 dataInputForm = new Form2(_contextMenuService.SelectedDataType);
+                Form2 dataInputForm = new Form2(_cellDataList[e.RowIndex].Type);
                 if (dataInputForm.ShowDialog() == DialogResult.OK)
                 {
-                    // 입력된 데이터를 DataGridView에 업데이트
+                    _cellDataList[e.RowIndex].Value = dataInputForm.InputValue;
+
+                    // DataGridView에 값 업데이트
                     _dataView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = dataInputForm.InputValue;
                 }
             }
         }
 
         /// <summary>
-        /// DataGrid에 숫자만 입력되도록 하는 함수
+        /// 지정한 수량(quantity)만큼 CellData의 데이터 타입을 Signed로 변경
         /// </summary>
-        /// <param name="dataView"></param>
-        public void AddKeyPressValidation(DataGridView dataView)
+        /// <param name="quantity">변경할 셀의 수량</param>
+        public void SetCellsToSigned(int quantity)
         {
-            dataView.EditingControlShowing += (sender, e) =>
-            {
-                var grid = sender as DataGridView;
-                if (grid.CurrentCell.ColumnIndex == 1)
-                {
-                    TextBox textBox = e.Control as TextBox;
-                    if (textBox != null)
-                    {
-                        textBox.KeyPress -= TextBox_KeyPress_NumericOnly;
-                        if (_contextMenuService.SelectedDataType == "Signed" || _contextMenuService.SelectedDataType == "Unsigned")
-                        {
-                            textBox.KeyPress += TextBox_KeyPress_NumericOnly;
-                        }
-                        else if (_contextMenuService.SelectedDataType == "Hex")
-                        {
-                            textBox.KeyPress += TextBox_KeyPress_HexOnly;
-                        }
-                        else if (_contextMenuService.SelectedDataType == "Binary")
-                        {
-                            textBox.KeyPress += TextBox_KeyPress_BinaryOnly;
-                        }
-                    }
-                }
-            };
-        }
+            // quantity가 cellDataList의 크기를 초과하지 않도록 제한
+            //int cellsToChange = Math.Min(quantity, _cellDataList.Count);
 
-        private void TextBox_KeyPress_NumericOnly(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            for (int i = 0; i < quantity; i++)
             {
-                e.Handled = true;
-            }
-        }
-
-        private void TextBox_KeyPress_HexOnly(object sender, KeyPressEventArgs e)
-        {
-            if (!Uri.IsHexDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void TextBox_KeyPress_BinaryOnly(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar != '0' && e.KeyChar != '1' && e.KeyChar != ' ' && !char.IsControl(e.KeyChar))
-            {
-                e.Handled = true;
+                // DataType을 Signed로 변경
+                _cellDataList[i].Type = DataType.Signed;
             }
         }
 
         /// <summary>
-        /// 유효성 검사 확인 함수
+        /// 데이터 타입 변경에 따른 Cell값 변경
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void DataView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        /// <param name="rowIndex"></param>
+        /// <param name="columnIndex"></param>
+        /// <param name="selectedType"></param>
+        public void UpdateCellData(int rowIndex, int columnIndex, DataType selectedType)
         {
-            if (e.ColumnIndex == 1)
+            if (columnIndex == 1)  // 두 번째 열만 처리
             {
-                int value;
-                if (_contextMenuService.SelectedDataType == "Signed" && int.TryParse(e.FormattedValue.ToString(), out value))
-                {
-                    if (value < -32768 || value > 32767)
-                    {
-                        MessageBox.Show("Signed 값 범위를 벗어났습니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        e.Cancel = true;
-                    }
-                }
-                else if (_contextMenuService.SelectedDataType == "Unsigned" && int.TryParse(e.FormattedValue.ToString(), out value))
-                {
-                    if (value <= 0 || value > 65535)
-                    {
-                        MessageBox.Show("Unsigned 값 범위를 벗어났습니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        e.Cancel = true;
-                    }
-                }
-                else if (_contextMenuService.SelectedDataType == "Hex")
-                {
-                    string hexValue = e.FormattedValue.ToString();
+                _cellDataList[rowIndex].Type = selectedType;  // 선택된 타입으로 업데이트
+                var selectedCell = _dataView.Rows[rowIndex].Cells[1];
 
-                    // '0x'로 시작하는지 확인
-                    if (!hexValue.StartsWith("0x"))
+                if (selectedType == DataType.Signed)
+                {
+                    int signedValue = ConvertToSigned(selectedCell.Value.ToString());
+                    if (signedValue > 32767)
                     {
-                        MessageBox.Show("Hex 형식이 잘못되었습니다. '0x'로 시작해야 합니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        e.Cancel = true;
+                        selectedCell.Value = signedValue - 65536;
                     }
                     else
                     {
-                        // 16진수를 숫자로 변환
-                        if (int.TryParse(hexValue.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out value))
-                        {
-                            if (value < 0x0000 || value > 0xFFFF)  // 0x0000 ~ 0xFFFF 범위 확인
-                            {
-                                MessageBox.Show("Hex 값 범위를 벗어났습니다. 0x0000에서 0xFFFF 사이여야 합니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                e.Cancel = true;
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("유효하지 않은 Hex 값입니다.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            e.Cancel = true;
-                        }
+                        selectedCell.Value = signedValue.ToString();
                     }
                 }
+                else if (selectedType == DataType.Unsigned)
+                {
+                    ushort unsignedValue = ConvertToUnsigned16(selectedCell.Value.ToString());
+                    selectedCell.Value = unsignedValue.ToString();
+
+
+
+                }
+                else if (selectedType == DataType.Hex)
+                {
+                    int value = ConvertToUnsigned16(selectedCell.Value.ToString());
+                    selectedCell.Value = $"0x{value:X4}";
+                }
+                else if (selectedType == DataType.Binary)
+                {
+                    int binaryValue = ConvertToSigned(selectedCell.Value.ToString());
+                    string binaryString = binaryValue < 0 ? Convert.ToString((ushort)binaryValue, 2).PadLeft(15, '0') : Convert.ToString(binaryValue, 2).PadLeft(16, '0');
+                    selectedCell.Value = binaryString;
+                }
+
+                return;
+                // 필요 시 추가 처리 (예: 값 변환)
+                // _cellDataList[rowIndex].Value = 변환된 값;
             }
+        }
+
+        /// <summary>
+        /// 형식에 따라 10진수로 변환
+        /// </summary>
+        private int ConvertToSigned(string value)
+        {
+            // 16진수 처리
+            if (value.StartsWith("0x"))
+            {
+                return int.Parse(value.Substring(2), NumberStyles.HexNumber);
+            }
+            // 이진수 처리
+            else if (value.All(c => c == '0' || c == '1') && (value.Length == 8 || value.Length == 16))
+            {
+                return Convert.ToInt32(value, 2);
+            }
+            // ASCII 문자 처리
+            else if (value.Length == 1 && !char.IsDigit(value[0]) && char.IsLetterOrDigit(value[0]))
+            {
+                return (int)value[0]; // 문자 -> ASCII 코드 변환
+            }
+            // 기본적으로 10진수로 처리
+            return int.Parse(value);
+        }
+
+        /// <summary>
+        /// Signed 값으로 변경 함수(16bit)
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="OverflowException"></exception>
+        private ushort ConvertToUnsigned16(string value)
+        {
+            int signedValue = ConvertToSigned(value);
+
+            // 부호 있는 값을 16-bit unsigned로 변환
+            if (signedValue < 0)
+            {
+                return (ushort)(signedValue + (1 << 16)); // 16-bit 2's complement 변환
+            }
+
+            // 16-bit 범위를 벗어나는 경우 처리
+            if (signedValue > ushort.MaxValue)
+            {
+                throw new OverflowException("값이 16-bit 범위를 초과했습니다.");
+            }
+
+            return (ushort)signedValue;
         }
     }
 }

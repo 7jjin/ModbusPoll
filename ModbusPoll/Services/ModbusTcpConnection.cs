@@ -15,7 +15,8 @@ namespace ModbusPoll.Services
         private TcpClient _tcpClient;
         private IModbusMaster _modbusMaster;
         public bool IsConnected => _tcpClient != null && _tcpClient.Connected;
-
+        
+        
         public void Connect(string ipAddress, int port)
         {
             try
