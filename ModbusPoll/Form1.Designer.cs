@@ -54,6 +54,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.rtb_dataView = new System.Windows.Forms.RichTextBox();
             this.txt_IpAddress = new System.Windows.Forms.MaskedTextBox();
+            this.lbl_SlaveId = new System.Windows.Forms.Label();
+            this.txt_SlaveId = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -115,7 +117,7 @@
             // 
             // txt_Port
             // 
-            this.txt_Port.Location = new System.Drawing.Point(353, 21);
+            this.txt_Port.Location = new System.Drawing.Point(342, 26);
             this.txt_Port.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txt_Port.Name = "txt_Port";
             this.txt_Port.Size = new System.Drawing.Size(83, 25);
@@ -123,7 +125,7 @@
             // 
             // btnConnect
             // 
-            this.btnConnect.Location = new System.Drawing.Point(487, 21);
+            this.btnConnect.Location = new System.Drawing.Point(672, 23);
             this.btnConnect.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(112, 26);
@@ -134,7 +136,7 @@
             // 
             // btnDisconnect
             // 
-            this.btnDisconnect.Location = new System.Drawing.Point(616, 21);
+            this.btnDisconnect.Location = new System.Drawing.Point(805, 23);
             this.btnDisconnect.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnDisconnect.Name = "btnDisconnect";
             this.btnDisconnect.Size = new System.Drawing.Size(112, 26);
@@ -302,12 +304,31 @@
             this.txt_IpAddress.Size = new System.Drawing.Size(132, 25);
             this.txt_IpAddress.TabIndex = 26;
             // 
+            // lbl_SlaveId
+            // 
+            this.lbl_SlaveId.AutoSize = true;
+            this.lbl_SlaveId.Location = new System.Drawing.Point(485, 30);
+            this.lbl_SlaveId.Name = "lbl_SlaveId";
+            this.lbl_SlaveId.Size = new System.Drawing.Size(62, 15);
+            this.lbl_SlaveId.TabIndex = 27;
+            this.lbl_SlaveId.Text = "Slave ID";
+            // 
+            // txt_SlaveId
+            // 
+            this.txt_SlaveId.Location = new System.Drawing.Point(553, 27);
+            this.txt_SlaveId.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txt_SlaveId.Name = "txt_SlaveId";
+            this.txt_SlaveId.Size = new System.Drawing.Size(83, 25);
+            this.txt_SlaveId.TabIndex = 28;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1035, 785);
+            this.Controls.Add(this.txt_SlaveId);
+            this.Controls.Add(this.lbl_SlaveId);
             this.Controls.Add(this.txt_IpAddress);
             this.Controls.Add(this.rtb_dataView);
             this.Controls.Add(this.lbl_WritePlcAddress);
@@ -371,6 +392,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.RichTextBox rtb_dataView;
         private System.Windows.Forms.MaskedTextBox txt_IpAddress;
+        private System.Windows.Forms.Label lbl_SlaveId;
+        private System.Windows.Forms.TextBox txt_SlaveId;
     }
 }
 

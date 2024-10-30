@@ -33,7 +33,7 @@ namespace ModbusPoll.Services
             dataView.Columns.Add("Column2", "00000"); // "00000" 헤더
 
             // 11개의 행 추가 (0~9번 인덱스, 총 10개)
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i <= 9; i++)
             {
                 dataView.Rows.Add();
                 _cellDataList.Add(new CellData(i, DataType.Signed, 0));    //초기값 Signed, 0 으로 설정

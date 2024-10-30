@@ -134,10 +134,11 @@ namespace ModbusPoll
         {
             string ipAddress = txt_IpAddress.Text;
             int port = int.Parse(txt_Port.Text);
-            _settings = new ModbusConnectionSettings(ipAddress, port);
+            int slaveId = int.Parse(txt_SlaveId.Text);  
+            _settings = new ModbusConnectionSettings(ipAddress, port, slaveId);
             try
                 {
-                _modbusConnection.Connect(_settings.IpAddress, _settings.Port);
+                _modbusConnection.Connect(_settings.IpAddress, _settings.Port, _settings.SlaveId);
                 MessageBox.Show("Connected to Modbus Slave");
             }catch(Exception ex) {
                 MessageBox.Show($"Connection failed : {ex.Message}");

@@ -11,10 +11,13 @@ namespace ModbusPoll.Models
         public string IpAddress { get; set; }
         public int Port { get; set; }
 
-        public ModbusConnectionSettings(string ipAddress, int port)
+        public int SlaveId { get; set; }
+
+        public ModbusConnectionSettings(string ipAddress, int port, int slaveId)
         {
             IpAddress = ipAddress;
             Port = port;
+            SlaveId = slaveId;
         }
     }
 }
