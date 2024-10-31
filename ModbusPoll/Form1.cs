@@ -26,7 +26,7 @@ namespace ModbusPoll
         {
             InitializeComponent();
             this.Text = "Modbus Poll";
-            this.ActiveControl = txt_IpAddress;
+
             _modbusConnection = modbusConnection;
             _dataViewService = dataViewService;
             _contextMenuService = contextMenuService;
@@ -34,11 +34,6 @@ namespace ModbusPoll
             dataView.MouseDown += DataView_MouseDown;
             txt_ReadAddress.TextChanged += Txt_ReadAddress_TextChanged;
             txt_WriteAddress.TextChanged += Txt_WriteAddress_TextChanged;
-            txt_IpAddress.Validating += txt_IpAddress_Validating;
-            txt_IpAddress.Leave += Txt_IpAddress_Leave;
-
-            txt_IpAddress.Mask = "990.990.990.990";
-
             _cellDataList = new List<CellData>();
         }
 
@@ -93,35 +88,14 @@ namespace ModbusPoll
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void txt_IpAddress_Validating(object sender, CancelEventArgs e)
-        {
-            string[] parts = txt_IpAddress.Text.Split('.');
-            foreach (var part in parts)
-            {
-                if(int.TryParse(part,out int num))
-                {
-                    if(num <0 || num > 255)
-                    {
-                        MessageBox.Show("IP 주소의 각 섹션은 0에서 255 사이의 숫자여야 합니다.");
-                        e.Cancel = true;
-                    }
-                }
-                
-            }
-        }
+
 
         /// <summary>
         /// Txt_IpAddress 기본값
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Txt_IpAddress_Leave(object sender, EventArgs e)
-        {
-            if (txt_IpAddress.Text.Trim().Length == 0)
-            {
-                txt_IpAddress.Text = "000.000.000.000";
-            }
-        }
+        
 
 
 
@@ -130,32 +104,20 @@ namespace ModbusPoll
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnConnect_Click(object sender, EventArgs e)
-        {
-            string ipAddress = txt_IpAddress.Text;
-            int port = int.Parse(txt_Port.Text);
-            int slaveId = int.Parse(txt_SlaveId.Text);  
-            _settings = new ModbusConnectionSettings(ipAddress, port, slaveId);
-            try
-                {
-                _modbusConnection.Connect(_settings.IpAddress, _settings.Port, _settings.SlaveId);
-                MessageBox.Show("Connected to Modbus Slave");
-            }catch(Exception ex) {
-                MessageBox.Show($"Connection failed : {ex.Message}");
-            }
-        }
+    
 
 
         /// <summary>
-        /// Modbus Tcp 연결 해제
+        /// Menu의 Connect를 클릭했을 경우
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnDisconnect_Click(object sender, EventArgs e)
+        private void menuConnect_Click(object sender, EventArgs e)
         {
-            _modbusConnection.Disconnect();
-            MessageBox.Show("Disconnected from Modbus Slave");
+            ConnectionForm connectionForm = new ConnectionForm(_modbusConnection);
+            connectionForm.ShowDialog();
         }
+
 
 
         /// <summary>
@@ -908,6 +870,22 @@ namespace ModbusPoll
 
             // Little-endian으로 변환
             return ((uint)reversedLower << 16) | reversedUpper;
+
+        }
+
+        /// <summary>
+        /// Modbus 연결 해제 함수
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void menuDisconnect_Click(object sender, EventArgs e)
+        {
+            _modbusConnection.Disconnect();
+            MessageBox.Show("Disconnected from Modbus Slave");
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
 
         }
     }
