@@ -28,11 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataView = new System.Windows.Forms.DataGridView();
             this.rtb_dataView = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -61,6 +62,10 @@
             this.menuDisconnect = new System.Windows.Forms.ToolStripMenuItem();
             this.gbx_readTest = new System.Windows.Forms.GroupBox();
             this.gbx_writeTest = new System.Windows.Forms.GroupBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.stlbl_status = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dataView)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -72,48 +77,49 @@
             this.HeaderMenu.SuspendLayout();
             this.gbx_readTest.SuspendLayout();
             this.gbx_writeTest.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataView
             // 
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.dataView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dataView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataView.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataView.DefaultCellStyle = dataGridViewCellStyle3;
             this.dataView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataView.Location = new System.Drawing.Point(0, 0);
             this.dataView.Margin = new System.Windows.Forms.Padding(0);
             this.dataView.MultiSelect = false;
             this.dataView.Name = "dataView";
             this.dataView.ReadOnly = true;
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataView.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataView.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.dataView.RowHeadersVisible = false;
             this.dataView.RowHeadersWidth = 51;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.dataView.RowsDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("굴림", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.dataView.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.dataView.RowTemplate.Height = 27;
             this.dataView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataView.ScrollBars = System.Windows.Forms.ScrollBars.None;
@@ -135,12 +141,13 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.BackColor = System.Drawing.SystemColors.Window;
+            this.tableLayoutPanel1.BackColor = System.Drawing.SystemColors.Menu;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.splitContainer2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.statusStrip1, 0, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -176,6 +183,7 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.BackColor = System.Drawing.SystemColors.Menu;
             this.splitContainer2.Panel2.Controls.Add(this.gbx_writeTest);
             this.splitContainer2.Panel2.Controls.Add(this.gbx_readTest);
             this.splitContainer2.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel2_Paint);
@@ -211,13 +219,17 @@
             // 
             // btnReadData
             // 
-            this.btnReadData.Location = new System.Drawing.Point(32, 119);
-            this.btnReadData.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnReadData.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnReadData.FlatAppearance.BorderColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnReadData.FlatAppearance.BorderSize = 0;
+            this.btnReadData.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnReadData.Location = new System.Drawing.Point(32, 111);
+            this.btnReadData.Margin = new System.Windows.Forms.Padding(0);
             this.btnReadData.Name = "btnReadData";
             this.btnReadData.Size = new System.Drawing.Size(419, 28);
             this.btnReadData.TabIndex = 25;
             this.btnReadData.Text = "Read Register";
-            this.btnReadData.UseVisualStyleBackColor = true;
+            this.btnReadData.UseVisualStyleBackColor = false;
             this.btnReadData.Click += new System.EventHandler(this.btnReadData_Click);
             // 
             // lbl_ReadPlcAddress
@@ -300,13 +312,17 @@
             // 
             // btnWriteData
             // 
-            this.btnWriteData.Location = new System.Drawing.Point(32, 112);
-            this.btnWriteData.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnWriteData.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnWriteData.FlatAppearance.BorderColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnWriteData.FlatAppearance.BorderSize = 0;
+            this.btnWriteData.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnWriteData.Location = new System.Drawing.Point(32, 113);
+            this.btnWriteData.Margin = new System.Windows.Forms.Padding(0);
             this.btnWriteData.Name = "btnWriteData";
             this.btnWriteData.Size = new System.Drawing.Size(419, 28);
             this.btnWriteData.TabIndex = 32;
             this.btnWriteData.Text = "Write Register";
-            this.btnWriteData.UseVisualStyleBackColor = true;
+            this.btnWriteData.UseVisualStyleBackColor = false;
             this.btnWriteData.Click += new System.EventHandler(this.btnWriteData_Click);
             // 
             // panel1
@@ -350,10 +366,11 @@
             // 
             // menuExit
             // 
+            this.menuExit.AutoSize = false;
             this.menuExit.Name = "menuExit";
             this.menuExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.menuExit.Size = new System.Drawing.Size(169, 26);
-            this.menuExit.Text = "Exit";
+            this.menuExit.Size = new System.Drawing.Size(300, 26);
+            this.menuExit.Text = "Exit              ";
             // 
             // connectioncToolStripMenuItem
             // 
@@ -367,22 +384,25 @@
             // 
             // menuConnect
             // 
+            this.menuConnect.AutoSize = false;
             this.menuConnect.Name = "menuConnect";
             this.menuConnect.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.menuConnect.Size = new System.Drawing.Size(191, 26);
-            this.menuConnect.Text = "Connect";
+            this.menuConnect.Size = new System.Drawing.Size(500, 26);
+            this.menuConnect.Text = "Connect          ";
             this.menuConnect.Click += new System.EventHandler(this.menuConnect_Click);
             // 
             // menuDisconnect
             // 
+            this.menuDisconnect.AutoSize = false;
             this.menuDisconnect.Name = "menuDisconnect";
             this.menuDisconnect.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.menuDisconnect.Size = new System.Drawing.Size(191, 26);
+            this.menuDisconnect.Size = new System.Drawing.Size(500, 26);
             this.menuDisconnect.Text = "Disconnect";
             this.menuDisconnect.Click += new System.EventHandler(this.menuDisconnect_Click);
             // 
             // gbx_readTest
             // 
+            this.gbx_readTest.BackColor = System.Drawing.SystemColors.Menu;
             this.gbx_readTest.Controls.Add(this.txt_ReadAddress);
             this.gbx_readTest.Controls.Add(this.lbl_ReadAddress);
             this.gbx_readTest.Controls.Add(this.txt_ReadQuantity);
@@ -391,7 +411,7 @@
             this.gbx_readTest.Controls.Add(this.label2);
             this.gbx_readTest.Controls.Add(this.lbl_ReadQuantity);
             this.gbx_readTest.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.gbx_readTest.Location = new System.Drawing.Point(25, 17);
+            this.gbx_readTest.Location = new System.Drawing.Point(25, 12);
             this.gbx_readTest.Name = "gbx_readTest";
             this.gbx_readTest.Size = new System.Drawing.Size(484, 152);
             this.gbx_readTest.TabIndex = 43;
@@ -400,6 +420,7 @@
             // 
             // gbx_writeTest
             // 
+            this.gbx_writeTest.BackColor = System.Drawing.SystemColors.Menu;
             this.gbx_writeTest.Controls.Add(this.txt_WriteAddress);
             this.gbx_writeTest.Controls.Add(this.lbl_WriteAddress);
             this.gbx_writeTest.Controls.Add(this.txt_WriteQuantity);
@@ -410,10 +431,34 @@
             this.gbx_writeTest.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.gbx_writeTest.Location = new System.Drawing.Point(25, 184);
             this.gbx_writeTest.Name = "gbx_writeTest";
-            this.gbx_writeTest.Size = new System.Drawing.Size(484, 160);
+            this.gbx_writeTest.Size = new System.Drawing.Size(484, 152);
             this.gbx_writeTest.TabIndex = 44;
             this.gbx_writeTest.TabStop = false;
             this.gbx_writeTest.Text = "Write Test";
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stlbl_status,
+            this.toolStripStatusLabel1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 769);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(978, 26);
+            this.statusStrip1.TabIndex = 28;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // stlbl_status
+            // 
+            this.stlbl_status.Name = "stlbl_status";
+            this.stlbl_status.Size = new System.Drawing.Size(63, 20);
+            this.stlbl_status.Text = "Status : ";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(152, 20);
+            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // Form1
             // 
@@ -425,10 +470,12 @@
             this.MainMenuStrip = this.HeaderMenu;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataView)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -441,6 +488,8 @@
             this.gbx_readTest.PerformLayout();
             this.gbx_writeTest.ResumeLayout(false);
             this.gbx_writeTest.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -474,6 +523,10 @@
         private System.Windows.Forms.ToolStripMenuItem menuDisconnect;
         private System.Windows.Forms.GroupBox gbx_readTest;
         private System.Windows.Forms.GroupBox gbx_writeTest;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ToolStripStatusLabel stlbl_status;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
 
