@@ -132,8 +132,6 @@ namespace ModbusPoll
             // Data Load
             _dataViewService.LoadData(dataView);
 
-          
-
             txt_ReadAddress.Text = "0";
             txt_ReadQuantity.Text = "10";  
             txt_WriteAddress.Text = "0";
@@ -884,7 +882,7 @@ namespace ModbusPoll
             MessageBox.Show("Disconnected from Modbus Slave");
         }
 
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        private void splitContainer2_Panel2_Paint(object sender, PaintEventArgs e)
         {
 
         }
