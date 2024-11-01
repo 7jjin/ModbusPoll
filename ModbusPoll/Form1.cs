@@ -21,11 +21,13 @@ namespace ModbusPoll
         private readonly IDataViewService _dataViewService;
         private readonly IContextMenuService _contextMenuService;
         private List<CellData> _cellDataList;
+        public string LogMessage { get; set; }
+        public Boolean IsConnected { get; set; }
 
         public Form1(IModbusConnection modbusConnection, IDataViewService dataViewService, IContextMenuService contextMenuService)
         {
             InitializeComponent();
-            this.Text = "Modbus Poll";
+            
 
             _modbusConnection = modbusConnection;
             _dataViewService = dataViewService;
@@ -34,10 +36,40 @@ namespace ModbusPoll
             dataView.MouseDown += DataView_MouseDown;
             txt_ReadAddress.TextChanged += Txt_ReadAddress_TextChanged;
             txt_WriteAddress.TextChanged += Txt_WriteAddress_TextChanged;
+            stlbl_statusCircle.Paint += StatusLabel_Paint;
+            tslbl_status.TextChanged += tslbl_status_TextChanged;
             _cellDataList = new List<CellData>();
         }
 
-        
+        private void tslbl_status_TextChanged(object sender, EventArgs e)
+        {
+            tslbl_status.Text = LogMessage;
+        }
+
+        private void StatusLabel_Paint(object sender, PaintEventArgs e)
+        {
+            Color color = new Color();
+
+            if(IsConnected == true)
+            {
+                color = Color.Green;
+                tslbl_conectText.Text = "Connected";
+            }else if(IsConnected == false)
+            {
+                color = Color.Red;
+                tslbl_conectText.Text = "Disconnected";
+            }
+            
+                
+            using (SolidBrush brush = new SolidBrush(color))
+            {
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; // 부드럽게 원 그리기
+                e.Graphics.FillEllipse(brush, 0, 0, stlbl_statusCircle.Width - 1, stlbl_statusCircle.Height - 1); // 원 그리기
+            }
+            
+        }
+
+
 
         /// <summary>
         /// ReadAddress 텍스트 박스의 입력값이 바뀔 때마다 PLC Label값도 바뀜
@@ -84,37 +116,13 @@ namespace ModbusPoll
         }
 
         /// <summary>
-        /// Txt_IPAddress Mask 유효성 검사
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-
-
-        /// <summary>
-        /// Txt_IpAddress 기본값
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        
-
-
-
-        /// <summary>
-        /// Modbus Tcp 연결
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-    
-
-
-        /// <summary>
         /// Menu의 Connect를 클릭했을 경우
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void menuConnect_Click(object sender, EventArgs e)
         {
-            ConnectionForm connectionForm = new ConnectionForm(_modbusConnection);
+            ConnectionForm connectionForm = new ConnectionForm(_modbusConnection,this);
             connectionForm.ShowDialog();
         }
 
@@ -132,10 +140,12 @@ namespace ModbusPoll
             // Data Load
             _dataViewService.LoadData(dataView);
 
+
             txt_ReadAddress.Text = "0";
             txt_ReadQuantity.Text = "10";  
             txt_WriteAddress.Text = "0";
             txt_WriteQuantity.Text = "10";
+           
         }
 
 
@@ -879,12 +889,19 @@ namespace ModbusPoll
         private void menuDisconnect_Click(object sender, EventArgs e)
         {
             _modbusConnection.Disconnect();
-            MessageBox.Show("Disconnected from Modbus Slave");
+            IsConnected = false;
         }
 
         private void splitContainer2_Panel2_Paint(object sender, PaintEventArgs e)
         {
 
         }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            tslbl_timer.Text = DateTime.Now.ToString("yyyy-MM-dd HH시 mm분 ss초 ");
+        }
+
+        
     }
 }

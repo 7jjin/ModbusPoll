@@ -16,10 +16,13 @@ namespace ModbusPoll
     {
         private ModbusConnectionSettings _settings;
         private IModbusConnection _modbusConnection;
-        public ConnectionForm(IModbusConnection modbusConnection)
+        private Form1 _form1;
+
+        public ConnectionForm(IModbusConnection modbusConnection, Form1 form1)
         {
             InitializeComponent();
             _modbusConnection = modbusConnection;
+            _form1 = form1; 
         }
 
         private void btn_Connect_Click(object sender, EventArgs e)
@@ -27,15 +30,20 @@ namespace ModbusPoll
             string ipAddress = txt_IpAddress.Text;
             int port = int.Parse(txt_Port.Text);
             int slaveId = int.Parse(txt_SlaveId.Text);
+            string currentTime = DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]");
             _settings = new ModbusConnectionSettings(ipAddress, port, slaveId);
             try
             {
+
                 _modbusConnection.Connect(_settings.IpAddress, _settings.Port, _settings.SlaveId);
+                _form1.IsConnected = true;
+                _form1.LogMessage = $"[{currentTime}] conected slaveId{slaveId}{ipAddress} {port}";
                 MessageBox.Show("Connected to Modbus Slave");
                 this.Close();
             }
             catch (Exception ex)
             {
+                _form1.IsConnected=false;
                 MessageBox.Show($"Connection failed : {ex.Message}");
             }
         }
