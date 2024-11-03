@@ -37,14 +37,11 @@ namespace ModbusPoll
             txt_ReadAddress.TextChanged += Txt_ReadAddress_TextChanged;
             txt_WriteAddress.TextChanged += Txt_WriteAddress_TextChanged;
             stlbl_statusCircle.Paint += StatusLabel_Paint;
-            tslbl_status.TextChanged += tslbl_status_TextChanged;
+
             _cellDataList = new List<CellData>();
         }
 
-        private void tslbl_status_TextChanged(object sender, EventArgs e)
-        {
-            tslbl_status.Text = LogMessage;
-        }
+
 
         private void StatusLabel_Paint(object sender, PaintEventArgs e)
         {
@@ -54,10 +51,12 @@ namespace ModbusPoll
             {
                 color = Color.Green;
                 tslbl_conectText.Text = "Connected";
+                tslbl_status.Text = LogMessage;
             }else if(IsConnected == false)
             {
                 color = Color.Red;
                 tslbl_conectText.Text = "Disconnected";
+                tslbl_status.Text = LogMessage;
             }
             
                 
@@ -310,6 +309,7 @@ namespace ModbusPoll
             catch (Exception ex)
             {
                 MessageBox.Show("02 Illegal Data Address");
+                tslbl_status.Text = ex.Message;
             }
         }
 
