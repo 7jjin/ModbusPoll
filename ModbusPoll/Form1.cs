@@ -52,11 +52,14 @@ namespace ModbusPoll
                 color = Color.Green;
                 tslbl_conectText.Text = "Connected";
                 tslbl_status.Text = LogMessage;
-            }else if(IsConnected == false)
+                tslbl_status.ForeColor = Color.Black;
+            }
+            else if(IsConnected == false)
             {
                 color = Color.Red;
                 tslbl_conectText.Text = "Disconnected";
                 tslbl_status.Text = LogMessage;
+                tslbl_status.ForeColor = Color.Red;
             }
             
                 
@@ -123,6 +126,18 @@ namespace ModbusPoll
         {
             ConnectionForm connectionForm = new ConnectionForm(_modbusConnection,this);
             connectionForm.ShowDialog();
+        }
+
+        /// <summary>
+        /// Modbus 연결 해제 함수
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void menuDisconnect_Click(object sender, EventArgs e)
+        {
+            _modbusConnection.Disconnect();
+            IsConnected = false;
+            LogMessage = "No connection";
         }
 
 
@@ -202,12 +217,14 @@ namespace ModbusPoll
                 if (!ushort.TryParse(txt_ReadAddress.Text, out startAddress))
                 {
                     MessageBox.Show("올바른 주소 값을 입력해주세요.");
+                    LogMessage = "Write Correct Address";
                     return;
                 }
                 ushort quantity;
                 if (!ushort.TryParse(txt_ReadQuantity.Text, out quantity))
                 {
                     MessageBox.Show("올바른 수량 값을 입력해주세요.");
+                    LogMessage = "Write Correct Quantity (0~10)";
                     return;
                 }
                 var data = await _modbusConnection.ReadHoldingRegistersAsync(startAddress, quantity);
@@ -305,11 +322,13 @@ namespace ModbusPoll
                 }
                 _dataViewService.SetCellsToSigned(data.Length-1);
                 rtb_dataView.Text = sb.ToString();
+                LogMessage = $"{currentTime} Read {40001+startAddress} ~ {40001+startAddress+quantity} data ";
+                tslbl_status.ForeColor = Color.Black;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("02 Illegal Data Address");
-                tslbl_status.Text = ex.Message;
+                LogMessage = "02 illegal Data Address";
+                tslbl_status.ForeColor = Color.Red;
             }
         }
 
@@ -320,18 +339,21 @@ namespace ModbusPoll
         /// <param name="e"></param>
         private async void btnWriteData_Click(object sender, EventArgs e)
         {
+            string currentTime = DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]");
             try
             {
                 ushort startAddress;
                 if (!ushort.TryParse(txt_WriteAddress.Text, out startAddress))
                 {
                     MessageBox.Show("올바른 주소 값을 입력해주세요.");
+                    LogMessage = "Write Correct Address";
                     return;
                 }
                 ushort quantity;
                 if (!ushort.TryParse(txt_WriteQuantity.Text, out quantity))
                 {
                     MessageBox.Show("올바른 수량 값을 입력해주세요.");
+                    LogMessage = "Write Correct Quantity (0~10)";
                     return;
                 }
 
@@ -370,11 +392,13 @@ namespace ModbusPoll
 
                 // Slave에 데이터 쓰기 (Function code 16번 사용)
                 await _modbusConnection.WriteHoldingRegistersAsync(startAddress, valuesToWrite);
-                MessageBox.Show("데이터가 성공적으로 전송되었습니다.");
+                LogMessage = $"{currentTime} Write {40001 + startAddress} ~ {40001 + startAddress + quantity} data ";
+                tslbl_status.ForeColor = Color.Black;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                LogMessage = "02 illegal Data Address";
+                tslbl_status.ForeColor = Color.Red;
             }
         }
 
@@ -881,16 +905,7 @@ namespace ModbusPoll
 
         }
 
-        /// <summary>
-        /// Modbus 연결 해제 함수
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void menuDisconnect_Click(object sender, EventArgs e)
-        {
-            _modbusConnection.Disconnect();
-            IsConnected = false;
-        }
+       
 
         private void splitContainer2_Panel2_Paint(object sender, PaintEventArgs e)
         {

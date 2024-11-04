@@ -38,14 +38,13 @@ namespace ModbusPoll
                 _modbusConnection.Connect(_settings.IpAddress, _settings.Port, _settings.SlaveId);
                 _form1.IsConnected = true;
                 _form1.LogMessage = $"{currentTime} connected slaveId - {slaveId} {ipAddress} {port}";
-                MessageBox.Show("Connected to Modbus Slave");
+
                 this.Close();
             }
             catch (Exception ex)
             {
                 _form1.IsConnected=false;
-                _form1.LogMessage = $"{currentTime} Slave Connection Failed";
-                MessageBox.Show($"Connection failed : {ex.Message}");
+                _form1.LogMessage = $"{currentTime} Slave Connection Failed. {ipAddress}:{port}";
             }
         }
 
