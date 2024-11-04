@@ -39,11 +39,12 @@ namespace ModbusPoll
                 _form1.IsConnected = true;
                 _form1.LogMessage = $"{currentTime} connected slaveId - {slaveId} {ipAddress} {port}";
 
+
                 this.Close();
             }
             catch (Exception ex)
             {
-                _form1.IsConnected=false;
+                _form1.IsConnected = false;
                 _form1.LogMessage = $"{currentTime} Slave Connection Failed. {ipAddress}:{port}";
             }
         }

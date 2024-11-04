@@ -46,20 +46,33 @@ namespace ModbusPoll
         private void StatusLabel_Paint(object sender, PaintEventArgs e)
         {
             Color color = new Color();
-
-            if(IsConnected == true)
+            string currentTime = DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]");
+            if (IsConnected == true)
             {
-                color = Color.Green;
-                tslbl_conectText.Text = "Connected";
-                tslbl_status.Text = LogMessage;
-                tslbl_status.ForeColor = Color.Black;
+                if (_modbusConnection.IsSocketConnected() == false)
+                {
+                    Console.WriteLine("연결이 해제되었습니다.");
+                    color = Color.Red;
+                    tslbl_conectText.Text = "Disconnected";
+                    tslbl_status.Text = $"{currentTime} Slave와의 연결이 끊어졌습니다.";
+                    tslbl_status.ForeColor = Color.Black;
+                }
+                else
+                {
+                    Console.WriteLine("연결을 성공했습니다.");
+                    color = Color.Green;
+                    tslbl_conectText.Text = "Connected";
+                    tslbl_status.Text = LogMessage;
+
+                }
+                
             }
             else if(IsConnected == false)
             {
+                Console.WriteLine("Slave의 연결이 해제되었습니다.");
                 color = Color.Red;
                 tslbl_conectText.Text = "Disconnected";
-                tslbl_status.Text = LogMessage;
-                tslbl_status.ForeColor = Color.Red;
+                tslbl_status.Text = LogMessage != null ? LogMessage : "No connection";
             }
             
                 
@@ -327,8 +340,13 @@ namespace ModbusPoll
             }
             catch (Exception ex)
             {
-                LogMessage = "02 illegal Data Address";
-                tslbl_status.ForeColor = Color.Red;
+                if(tslbl_status.Text != "No connection")
+                {
+                    LogMessage = $"{currentTime} 02 illegal Data Address";
+                    tslbl_status.ForeColor = Color.Red;
+                }
+                
+               
             }
         }
 
@@ -397,8 +415,11 @@ namespace ModbusPoll
             }
             catch (Exception ex)
             {
-                LogMessage = "02 illegal Data Address";
-                tslbl_status.ForeColor = Color.Red;
+                if(tslbl_status.Text != "No connection")
+                {
+                    LogMessage = $"{currentTime} 02 illegal Data Address";
+                    tslbl_status.ForeColor = Color.Red;
+                }
             }
         }
 
