@@ -130,7 +130,7 @@
             this.dataView.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.dataView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataView.ShowCellToolTips = false;
-            this.dataView.Size = new System.Drawing.Size(433, 359);
+            this.dataView.Size = new System.Drawing.Size(412, 359);
             this.dataView.TabIndex = 6;
             // 
             // rtb_dataView
@@ -140,7 +140,7 @@
             this.rtb_dataView.Location = new System.Drawing.Point(0, 0);
             this.rtb_dataView.Name = "rtb_dataView";
             this.rtb_dataView.ReadOnly = true;
-            this.rtb_dataView.Size = new System.Drawing.Size(978, 373);
+            this.rtb_dataView.Size = new System.Drawing.Size(931, 373);
             this.rtb_dataView.TabIndex = 25;
             this.rtb_dataView.Text = "";
             // 
@@ -162,7 +162,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 373F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 34F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(978, 795);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(931, 795);
             this.tableLayoutPanel1.TabIndex = 29;
             // 
             // panel2
@@ -172,7 +172,7 @@
             this.panel2.Location = new System.Drawing.Point(0, 388);
             this.panel2.Margin = new System.Windows.Forms.Padding(0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(978, 373);
+            this.panel2.Size = new System.Drawing.Size(931, 373);
             this.panel2.TabIndex = 26;
             // 
             // splitContainer2
@@ -192,8 +192,8 @@
             this.splitContainer2.Panel2.Controls.Add(this.gbx_writeTest);
             this.splitContainer2.Panel2.Controls.Add(this.gbx_readTest);
             this.splitContainer2.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel2_Paint);
-            this.splitContainer2.Size = new System.Drawing.Size(978, 359);
-            this.splitContainer2.SplitterDistance = 433;
+            this.splitContainer2.Size = new System.Drawing.Size(931, 359);
+            this.splitContainer2.SplitterDistance = 412;
             this.splitContainer2.TabIndex = 27;
             // 
             // gbx_writeTest
@@ -207,7 +207,7 @@
             this.gbx_writeTest.Controls.Add(this.btnWriteData);
             this.gbx_writeTest.Controls.Add(this.label5);
             this.gbx_writeTest.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.gbx_writeTest.Location = new System.Drawing.Point(25, 184);
+            this.gbx_writeTest.Location = new System.Drawing.Point(17, 185);
             this.gbx_writeTest.Name = "gbx_writeTest";
             this.gbx_writeTest.Size = new System.Drawing.Size(484, 152);
             this.gbx_writeTest.TabIndex = 44;
@@ -292,7 +292,7 @@
             this.gbx_readTest.Controls.Add(this.label2);
             this.gbx_readTest.Controls.Add(this.lbl_ReadQuantity);
             this.gbx_readTest.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.gbx_readTest.Location = new System.Drawing.Point(25, 12);
+            this.gbx_readTest.Location = new System.Drawing.Point(17, 13);
             this.gbx_readTest.Name = "gbx_readTest";
             this.gbx_readTest.Size = new System.Drawing.Size(484, 152);
             this.gbx_readTest.TabIndex = 43;
@@ -375,7 +375,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(978, 29);
+            this.panel1.Size = new System.Drawing.Size(931, 29);
             this.panel1.TabIndex = 0;
             // 
             // HeaderMenu
@@ -391,7 +391,7 @@
             this.HeaderMenu.Location = new System.Drawing.Point(0, 0);
             this.HeaderMenu.Name = "HeaderMenu";
             this.HeaderMenu.Padding = new System.Windows.Forms.Padding(0);
-            this.HeaderMenu.Size = new System.Drawing.Size(976, 27);
+            this.HeaderMenu.Size = new System.Drawing.Size(929, 27);
             this.HeaderMenu.TabIndex = 29;
             this.HeaderMenu.Text = "menuStrip1";
             // 
@@ -412,6 +412,7 @@
             this.menuExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.menuExit.Size = new System.Drawing.Size(300, 26);
             this.menuExit.Text = "Exit              ";
+            this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
             // 
             // connectioncToolStripMenuItem
             // 
@@ -453,7 +454,7 @@
             this.tslbl_conectText});
             this.statusStrip1.Location = new System.Drawing.Point(0, 761);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(978, 34);
+            this.statusStrip1.Size = new System.Drawing.Size(931, 34);
             this.statusStrip1.TabIndex = 28;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -515,7 +516,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(978, 795);
+            this.ClientSize = new System.Drawing.Size(931, 795);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MainMenuStrip = this.HeaderMenu;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);

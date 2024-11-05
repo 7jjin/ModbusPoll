@@ -33,15 +33,15 @@
             this.btn_Connect = new System.Windows.Forms.Button();
             this.btn_Cancel = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.lbl_SlaveId = new System.Windows.Forms.Label();
-            this.txt_SlaveId = new System.Windows.Forms.TextBox();
-            this.lbl_FunctionCode = new System.Windows.Forms.Label();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.lbl_IpAddress = new System.Windows.Forms.Label();
-            this.txt_IpAddress = new System.Windows.Forms.TextBox();
-            this.lbl_Port = new System.Windows.Forms.Label();
+            this.lbl_FunctionCode = new System.Windows.Forms.Label();
+            this.txt_SlaveId = new System.Windows.Forms.TextBox();
+            this.lbl_SlaveId = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txt_Port = new System.Windows.Forms.TextBox();
+            this.lbl_Port = new System.Windows.Forms.Label();
+            this.txt_IpAddress = new System.Windows.Forms.TextBox();
+            this.lbl_IpAddress = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -101,6 +101,44 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Slave Definition";
             // 
+            // comboBox2
+            // 
+            this.comboBox2.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "03 Holding Register (4x)"});
+            this.comboBox2.Location = new System.Drawing.Point(110, 88);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(258, 23);
+            this.comboBox2.TabIndex = 3;
+            this.comboBox2.Text = "03 Holding Register (4x)";
+            // 
+            // lbl_FunctionCode
+            // 
+            this.lbl_FunctionCode.AutoSize = true;
+            this.lbl_FunctionCode.Location = new System.Drawing.Point(26, 91);
+            this.lbl_FunctionCode.Name = "lbl_FunctionCode";
+            this.lbl_FunctionCode.Size = new System.Drawing.Size(63, 15);
+            this.lbl_FunctionCode.TabIndex = 2;
+            this.lbl_FunctionCode.Text = "Function";
+            // 
+            // txt_SlaveId
+            // 
+            this.txt_SlaveId.Location = new System.Drawing.Point(110, 37);
+            this.txt_SlaveId.Name = "txt_SlaveId";
+            this.txt_SlaveId.Size = new System.Drawing.Size(96, 25);
+            this.txt_SlaveId.TabIndex = 1;
+            this.txt_SlaveId.Text = "１";
+            // 
+            // lbl_SlaveId
+            // 
+            this.lbl_SlaveId.AutoSize = true;
+            this.lbl_SlaveId.Location = new System.Drawing.Point(26, 43);
+            this.lbl_SlaveId.Name = "lbl_SlaveId";
+            this.lbl_SlaveId.Size = new System.Drawing.Size(62, 15);
+            this.lbl_SlaveId.TabIndex = 0;
+            this.lbl_SlaveId.Text = "Slave ID";
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.txt_Port);
@@ -114,51 +152,22 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "TCP/IP Server";
             // 
-            // lbl_SlaveId
+            // txt_Port
             // 
-            this.lbl_SlaveId.AutoSize = true;
-            this.lbl_SlaveId.Location = new System.Drawing.Point(26, 43);
-            this.lbl_SlaveId.Name = "lbl_SlaveId";
-            this.lbl_SlaveId.Size = new System.Drawing.Size(62, 15);
-            this.lbl_SlaveId.TabIndex = 0;
-            this.lbl_SlaveId.Text = "Slave ID";
+            this.txt_Port.Location = new System.Drawing.Point(291, 54);
+            this.txt_Port.Name = "txt_Port";
+            this.txt_Port.Size = new System.Drawing.Size(79, 25);
+            this.txt_Port.TabIndex = 3;
+            this.txt_Port.Text = "502";
             // 
-            // txt_SlaveId
+            // lbl_Port
             // 
-            this.txt_SlaveId.Location = new System.Drawing.Point(110, 37);
-            this.txt_SlaveId.Name = "txt_SlaveId";
-            this.txt_SlaveId.Size = new System.Drawing.Size(96, 25);
-            this.txt_SlaveId.TabIndex = 1;
-            // 
-            // lbl_FunctionCode
-            // 
-            this.lbl_FunctionCode.AutoSize = true;
-            this.lbl_FunctionCode.Location = new System.Drawing.Point(26, 91);
-            this.lbl_FunctionCode.Name = "lbl_FunctionCode";
-            this.lbl_FunctionCode.Size = new System.Drawing.Size(79, 19);
-            this.lbl_FunctionCode.TabIndex = 2;
-            this.lbl_FunctionCode.Text = "Function";
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "03 Holding Register (4x)"});
-            this.comboBox2.Location = new System.Drawing.Point(110, 88);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(258, 23);
-            this.comboBox2.TabIndex = 3;
-            this.comboBox2.Text = "03 Holding Register (4x)";
-            // 
-            // lbl_IpAddress
-            // 
-            this.lbl_IpAddress.AutoSize = true;
-            this.lbl_IpAddress.Location = new System.Drawing.Point(15, 32);
-            this.lbl_IpAddress.Name = "lbl_IpAddress";
-            this.lbl_IpAddress.Size = new System.Drawing.Size(98, 19);
-            this.lbl_IpAddress.TabIndex = 0;
-            this.lbl_IpAddress.Text = "IP Address";
+            this.lbl_Port.AutoSize = true;
+            this.lbl_Port.Location = new System.Drawing.Point(288, 32);
+            this.lbl_Port.Name = "lbl_Port";
+            this.lbl_Port.Size = new System.Drawing.Size(34, 15);
+            this.lbl_Port.TabIndex = 2;
+            this.lbl_Port.Text = "Port";
             // 
             // txt_IpAddress
             // 
@@ -166,22 +175,16 @@
             this.txt_IpAddress.Name = "txt_IpAddress";
             this.txt_IpAddress.Size = new System.Drawing.Size(235, 25);
             this.txt_IpAddress.TabIndex = 1;
+            this.txt_IpAddress.Text = "127.0.0.1";
             // 
-            // lbl_Port
+            // lbl_IpAddress
             // 
-            this.lbl_Port.AutoSize = true;
-            this.lbl_Port.Location = new System.Drawing.Point(288, 32);
-            this.lbl_Port.Name = "lbl_Port";
-            this.lbl_Port.Size = new System.Drawing.Size(43, 19);
-            this.lbl_Port.TabIndex = 2;
-            this.lbl_Port.Text = "Port";
-            // 
-            // txt_Port
-            // 
-            this.txt_Port.Location = new System.Drawing.Point(291, 54);
-            this.txt_Port.Name = "txt_Port";
-            this.txt_Port.Size = new System.Drawing.Size(79, 25);
-            this.txt_Port.TabIndex = 3;
+            this.lbl_IpAddress.AutoSize = true;
+            this.lbl_IpAddress.Location = new System.Drawing.Point(15, 32);
+            this.lbl_IpAddress.Name = "lbl_IpAddress";
+            this.lbl_IpAddress.Size = new System.Drawing.Size(78, 15);
+            this.lbl_IpAddress.TabIndex = 0;
+            this.lbl_IpAddress.Text = "IP Address";
             // 
             // ConnectionForm
             // 

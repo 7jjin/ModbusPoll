@@ -938,6 +938,9 @@ namespace ModbusPoll
             tslbl_timer.Text = DateTime.Now.ToString("yyyy-MM-dd HH시 mm분 ss초 ");
         }
 
-        
+        private void menuExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
