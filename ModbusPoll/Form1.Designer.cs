@@ -410,7 +410,7 @@
             this.menuExit.AutoSize = false;
             this.menuExit.Name = "menuExit";
             this.menuExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.menuExit.Size = new System.Drawing.Size(300, 26);
+            this.menuExit.Size = new System.Drawing.Size(300, 23);
             this.menuExit.Text = "Exit              ";
             this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
             // 
@@ -429,7 +429,7 @@
             this.menuConnect.AutoSize = false;
             this.menuConnect.Name = "menuConnect";
             this.menuConnect.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.menuConnect.Size = new System.Drawing.Size(500, 26);
+            this.menuConnect.Size = new System.Drawing.Size(500, 23);
             this.menuConnect.Text = "Connect          ";
             this.menuConnect.Click += new System.EventHandler(this.menuConnect_Click);
             // 
@@ -438,7 +438,7 @@
             this.menuDisconnect.AutoSize = false;
             this.menuDisconnect.Name = "menuDisconnect";
             this.menuDisconnect.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.menuDisconnect.Size = new System.Drawing.Size(500, 26);
+            this.menuDisconnect.Size = new System.Drawing.Size(500, 23);
             this.menuDisconnect.Text = "Disconnect";
             this.menuDisconnect.Click += new System.EventHandler(this.menuDisconnect_Click);
             // 
@@ -493,16 +493,16 @@
             this.stlbl_statusCircle.BackColor = System.Drawing.Color.Transparent;
             this.stlbl_statusCircle.Font = new System.Drawing.Font("맑은 고딕", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.stlbl_statusCircle.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.stlbl_statusCircle.Margin = new System.Windows.Forms.Padding(10, 4, 0, 2);
+            this.stlbl_statusCircle.Margin = new System.Windows.Forms.Padding(10, 6, 0, 6);
             this.stlbl_statusCircle.Name = "stlbl_statusCircle";
-            this.stlbl_statusCircle.Size = new System.Drawing.Size(22, 28);
+            this.stlbl_statusCircle.Size = new System.Drawing.Size(16, 22);
             this.stlbl_statusCircle.Text = "      ";
             // 
             // tslbl_conectText
             // 
-            this.tslbl_conectText.Margin = new System.Windows.Forms.Padding(6, 4, 0, 2);
+            this.tslbl_conectText.Margin = new System.Windows.Forms.Padding(3, 4, 0, 4);
             this.tslbl_conectText.Name = "tslbl_conectText";
-            this.tslbl_conectText.Size = new System.Drawing.Size(83, 28);
+            this.tslbl_conectText.Size = new System.Drawing.Size(83, 26);
             this.tslbl_conectText.Text = "Connected";
             // 
             // timer1

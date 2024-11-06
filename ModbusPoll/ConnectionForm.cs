@@ -22,7 +22,11 @@ namespace ModbusPoll
         {
             InitializeComponent();
             _modbusConnection = modbusConnection;
-            _form1 = form1; 
+            _form1 = form1;
+            txt_IpAddress.Text = Properties.Settings.Default.ipAddress;
+            txt_Port.Text = Properties.Settings.Default.port;
+            txt_SlaveId.Text = Properties.Settings.Default.slaveId;
+
         }
 
         private void btn_Connect_Click(object sender, EventArgs e)
@@ -38,6 +42,10 @@ namespace ModbusPoll
                 _modbusConnection.Connect(_settings.IpAddress, _settings.Port, _settings.SlaveId);
                 _form1.IsConnected = true;
                 _form1.LogMessage = $"{currentTime} connected slaveId - {slaveId} {ipAddress} {port}";
+
+                Properties.Settings.Default.ipAddress = ipAddress;
+                Properties.Settings.Default.port = port.ToString();
+                Properties.Settings.Default.slaveId = slaveId.ToString();
 
 
                 this.Close();

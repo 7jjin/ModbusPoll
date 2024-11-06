@@ -128,7 +128,6 @@
             this.txt_SlaveId.Name = "txt_SlaveId";
             this.txt_SlaveId.Size = new System.Drawing.Size(96, 25);
             this.txt_SlaveId.TabIndex = 1;
-            this.txt_SlaveId.Text = "１";
             // 
             // lbl_SlaveId
             // 
@@ -158,7 +157,6 @@
             this.txt_Port.Name = "txt_Port";
             this.txt_Port.Size = new System.Drawing.Size(79, 25);
             this.txt_Port.TabIndex = 3;
-            this.txt_Port.Text = "502";
             // 
             // lbl_Port
             // 
@@ -175,7 +173,6 @@
             this.txt_IpAddress.Name = "txt_IpAddress";
             this.txt_IpAddress.Size = new System.Drawing.Size(235, 25);
             this.txt_IpAddress.TabIndex = 1;
-            this.txt_IpAddress.Text = "127.0.0.1";
             // 
             // lbl_IpAddress
             // 

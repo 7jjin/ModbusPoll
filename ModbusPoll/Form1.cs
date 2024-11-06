@@ -51,7 +51,6 @@ namespace ModbusPoll
             {
                 if (_modbusConnection.IsSocketConnected() == false)
                 {
-                    Console.WriteLine("연결이 해제되었습니다.");
                     color = Color.Red;
                     tslbl_conectText.Text = "Disconnected";
                     tslbl_status.Text = $"{currentTime} Slave와의 연결이 끊어졌습니다.";
@@ -59,17 +58,13 @@ namespace ModbusPoll
                 }
                 else
                 {
-                    Console.WriteLine("연결을 성공했습니다.");
                     color = Color.Green;
                     tslbl_conectText.Text = "Connected";
                     tslbl_status.Text = LogMessage;
-
                 }
-                
             }
             else if(IsConnected == false)
             {
-                Console.WriteLine("Slave의 연결이 해제되었습니다.");
                 color = Color.Red;
                 tslbl_conectText.Text = "Disconnected";
                 tslbl_status.Text = LogMessage != null ? LogMessage : "No connection";
