@@ -39,7 +39,6 @@ public class ModbusTcpConnection : IModbusConnection
             _slaveId = (byte)slaveId;
             var factory = new ModbusFactory();
             _modbusMaster = factory.CreateMaster(_tcpClient);
-            Console.WriteLine("Successfully connected to the Modbus Slave.");
 
             // 연결 성공 후 타이머 시작
             _connectionTimer.Start();
@@ -100,7 +99,7 @@ public class ModbusTcpConnection : IModbusConnection
             ushort startAddress = 0;
             ushort quantity = 1;
             await _modbusMaster.ReadHoldingRegistersAsync(_slaveId, startAddress, quantity);
-            Console.WriteLine("Connection is alive.");
+            // Console.WriteLine("Connection is alive.");
         }
         catch (Exception)
         {
@@ -124,13 +123,13 @@ public class ModbusTcpConnection : IModbusConnection
             {
                 // 재연결 시도
                 Connect(_ipAddress, _port, _slaveId); // 실제 IP 및 포트 사용
-                Console.WriteLine("Reconnected successfully.");
+                //Console.WriteLine("Reconnected successfully.");
                 _connectionTimer.Start(); // 재연결 성공 시 타이머 재시작
                 break;
             }
             catch
             {
-                Console.WriteLine("Reconnection attempt failed. Retrying in 3 seconds...");
+                //Console.WriteLine("Reconnection attempt failed. Retrying in 3 seconds...");
                 await Task.Delay(3000); // 재연결 대기 시간 설정
             }
         }

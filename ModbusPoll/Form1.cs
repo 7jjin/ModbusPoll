@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -53,8 +54,10 @@ namespace ModbusPoll
                 {
                     color = Color.Red;
                     tslbl_conectText.Text = "Disconnected";
-                    tslbl_status.Text = $"{currentTime} Slave와의 연결이 끊어졌습니다.";
+                    tslbl_status.Text = "Slave와의 연결이 끊어졌습니다.";
                     tslbl_status.ForeColor = Color.Black;
+                    _dataViewService.LoadData(dataView);
+                    rtb_dataView.Clear();
                 }
                 else
                 {
@@ -68,6 +71,8 @@ namespace ModbusPoll
                 color = Color.Red;
                 tslbl_conectText.Text = "Disconnected";
                 tslbl_status.Text = LogMessage != null ? LogMessage : "No connection";
+                _dataViewService.LoadData(dataView);
+                rtb_dataView.Clear();
             }
             
                 
@@ -144,6 +149,8 @@ namespace ModbusPoll
         private void menuDisconnect_Click(object sender, EventArgs e)
         {
             _modbusConnection.Disconnect();
+            ResetSettingsToDefault();
+            rtb_dataView.Clear();
             IsConnected = false;
             LogMessage = "No connection";
         }
@@ -244,6 +251,7 @@ namespace ModbusPoll
                 {
                     for (int i = 0; i < data.Length; i++)
                     {
+                        dataView.Rows[i].Cells[1].Value = 0;
                         // Signed 범위 값 처리
                         int signedValue = (short)data[i]; // 16-bit Signed 처리
                         string displayedValue;
@@ -274,23 +282,6 @@ namespace ModbusPoll
                         string hexValue = $"0x{data[i]:X4}";
                         string binaryValue = Convert.ToString(data[i], 2).PadLeft(16, '0');
                         sb.AppendLine($"{currentTime}\t Address: {i + startAddress}\t Signed -> {signedValue}\t Unsigned -> {data[i]}\t Hex -> {hexValue}\t Binary -> {FormatBinary(binaryValue)}");
-                        if (signedValue >= minValue && signedValue <= maxValue)
-                        {
-                            // 텍스트 색상 빨간색으로 설정
-                            rtb_dataView.SelectionStart = rtb_dataView.TextLength;
-                            rtb_dataView.SelectionLength = 0;  // 기존 선택 영역 지우기
-                            rtb_dataView.SelectionColor = Color.Red;
-                            rtb_dataView.AppendText($"{currentTime}\t Address: {i + startAddress}\t Signed -> {signedValue}\t Unsigned -> {data[i]}\t Hex -> {hexValue}\t Binary -> {FormatBinary(binaryValue)}\n");
-                        }
-                        else
-                        {
-                            // 일반 색상으로 텍스트 추가
-                            rtb_dataView.SelectionStart = rtb_dataView.TextLength;
-                            rtb_dataView.SelectionLength = 0;
-                            rtb_dataView.SelectionColor = Color.Black;
-                            rtb_dataView.AppendText($"{currentTime}\t Address: {i + startAddress}\t Signed -> {signedValue}\t Unsigned -> {data[i]}\t Hex -> {hexValue}\t Binary -> {FormatBinary(binaryValue)}\n");
-                        }
-
                     }
                     var firstCelData = dataView.Rows[0].Cells[1].Value.ToString();
                     var secondData = dataView.Rows[1].Cells[1].Value.ToString();
@@ -348,6 +339,13 @@ namespace ModbusPoll
                     _dataViewService.SetCellsToSigned(data.Length - 1);
                     rtb_dataView.Text = sb.ToString();
                     LogMessage = $"{currentTime} Read {40001 + startAddress} ~ {40001 + startAddress + quantity} data ";
+                    if (ushort.TryParse(txt_ReadAddress.Text, out ushort inputValue))
+                    {
+                        // 40001을 더한 값 계산
+                        int result = inputValue + 40001;
+
+                        dataView.Columns[1].HeaderText = $"{result}";
+                    }
                     tslbl_status.ForeColor = Color.Black;
                 }
                 else
@@ -360,6 +358,8 @@ namespace ModbusPoll
             {
                 if(tslbl_status.Text != "No connection")
                 {
+                    MessageBox.Show("Data 주소와 수량이 올바르지 않습니다.", "Illeagal Data Address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                     LogMessage = $"{currentTime} 02 illegal Data Address";
                     tslbl_status.ForeColor = Color.Red;
                 }
@@ -394,7 +394,7 @@ namespace ModbusPoll
                 }
 
                 ushort[] valuesToWrite = new ushort[quantity];
-                for (int i = startAddress; i < startAddress + quantity; i++)
+                for (int i = 0; i < quantity; i++)
                 {
                     string cellValue = dataView.Rows[i].Cells[1].Value?.ToString();
                     if (string.IsNullOrEmpty(cellValue))
@@ -429,12 +429,21 @@ namespace ModbusPoll
                 // Slave에 데이터 쓰기 (Function code 16번 사용)
                 await _modbusConnection.WriteHoldingRegistersAsync(startAddress, valuesToWrite);
                 LogMessage = $"{currentTime} Write {40001 + startAddress} ~ {40001 + startAddress + quantity} data ";
+                if (ushort.TryParse(txt_WriteAddress.Text, out ushort inputValue))
+                {
+                    // 40001을 더한 값 계산
+                    int result = inputValue + 40001;
+
+                    dataView.Columns[1].HeaderText = $"{result}";
+                }
                 tslbl_status.ForeColor = Color.Black;
             }
             catch (Exception ex)
             {
                 if(tslbl_status.Text != "No connection")
                 {
+                    MessageBox.Show("Data 주소와 수량이 올바르지 않습니다.", "Illeagal Data Address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                     LogMessage = $"{currentTime} 02 illegal Data Address";
                     tslbl_status.ForeColor = Color.Red;
                 }
