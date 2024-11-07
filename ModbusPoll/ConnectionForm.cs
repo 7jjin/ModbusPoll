@@ -26,8 +26,8 @@ namespace ModbusPoll
             txt_IpAddress.Text = Properties.Settings.Default.ipAddress;
             txt_Port.Text = Properties.Settings.Default.port;
             txt_SlaveId.Text = Properties.Settings.Default.slaveId;
-
         }
+
 
         private void btn_Connect_Click(object sender, EventArgs e)
         {

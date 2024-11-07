@@ -58,5 +58,41 @@ namespace ModbusPoll.Properties {
                 this["slaveId"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int startScale {
+            get {
+                return ((int)(this["startScale"]));
+            }
+            set {
+                this["startScale"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int endScale {
+            get {
+                return ((int)(this["endScale"]));
+            }
+            set {
+                this["endScale"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsRangeEnabled {
+            get {
+                return ((bool)(this["IsRangeEnabled"]));
+            }
+            set {
+                this["IsRangeEnabled"] = value;
+            }
+        }
     }
 }

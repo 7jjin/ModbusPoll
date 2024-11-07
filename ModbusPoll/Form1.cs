@@ -21,14 +21,14 @@ namespace ModbusPoll
         private readonly IDataViewService _dataViewService;
         private readonly IContextMenuService _contextMenuService;
         private List<CellData> _cellDataList;
+        private int minValue;
+        private int maxValue;
         public string LogMessage { get; set; }
         public Boolean IsConnected { get; set; }
 
         public Form1(IModbusConnection modbusConnection, IDataViewService dataViewService, IContextMenuService contextMenuService)
         {
             InitializeComponent();
-            
-
             _modbusConnection = modbusConnection;
             _dataViewService = dataViewService;
             _contextMenuService = contextMenuService;
@@ -935,7 +935,38 @@ namespace ModbusPoll
 
         private void menuExit_Click(object sender, EventArgs e)
         {
+            ResetSettingsToDefault();
             this.Close();
         }
+
+        private void btnScale_Click(object sender, EventArgs e)
+        {
+            using (var rangeForm = new ScaleSettingForm())
+            {
+                if (rangeForm.ShowDialog() == DialogResult.OK && rangeForm.IsRangeEnabled)
+                {
+                    minValue = rangeForm.MinValue ?? 0;
+                    maxValue = rangeForm.MaxValue ?? 0;
+                    // 받은 minValue와 maxValue 값을 활용하는 로직 추가
+                }
+            }
+        }
+
+        private void ScaleSettingForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ResetSettingsToDefault();
+        }
+
+        private void ResetSettingsToDefault()
+        {
+            Properties.Settings.Default.ipAddress = "127.0.0.1";
+            Properties.Settings.Default.port = "502";
+            Properties.Settings.Default.slaveId = "1";
+            Properties.Settings.Default.startScale = 0;  // 원하는 기본값으로 설정
+            Properties.Settings.Default.endScale = 0;    // 원하는 기본값으로 설정
+            Properties.Settings.Default.IsRangeEnabled = false;  // 기본값
+
+            Properties.Settings.Default.Save();
+        } 
     }
 }
