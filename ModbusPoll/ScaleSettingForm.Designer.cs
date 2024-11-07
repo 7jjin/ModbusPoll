@@ -82,7 +82,7 @@
             this.ckb_isScale.AutoSize = true;
             this.ckb_isScale.Location = new System.Drawing.Point(37, 71);
             this.ckb_isScale.Name = "ckb_isScale";
-            this.ckb_isScale.Size = new System.Drawing.Size(119, 24);
+            this.ckb_isScale.Size = new System.Drawing.Size(95, 19);
             this.ckb_isScale.TabIndex = 6;
             this.ckb_isScale.Text = "Use scale";
             this.ckb_isScale.UseVisualStyleBackColor = true;
@@ -95,6 +95,7 @@
             this.txt_endScale.Name = "txt_endScale";
             this.txt_endScale.Size = new System.Drawing.Size(160, 25);
             this.txt_endScale.TabIndex = 5;
+            this.txt_endScale.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label1
             // 
@@ -110,8 +111,9 @@
             this.txt_startScale.Location = new System.Drawing.Point(37, 40);
             this.txt_startScale.Margin = new System.Windows.Forms.Padding(0);
             this.txt_startScale.Name = "txt_startScale";
-            this.txt_startScale.Size = new System.Drawing.Size(147, 25);
+            this.txt_startScale.Size = new System.Drawing.Size(148, 25);
             this.txt_startScale.TabIndex = 3;
+            this.txt_startScale.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // ScaleSettingForm
             // 

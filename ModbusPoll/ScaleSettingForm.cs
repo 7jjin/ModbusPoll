@@ -20,6 +20,9 @@ namespace ModbusPoll
             InitializeComponent();
             txt_startScale.KeyPress += textBox_KeyPress;
             txt_endScale.KeyPress += textBox_KeyPress;
+
+            txt_startScale.TextChanged += textBox_TextChanged;
+            txt_endScale.TextChanged += textBox_TextChanged;
         }
 
         private void ScaleSettingForm_Load(object sender, EventArgs e)
@@ -44,16 +47,39 @@ namespace ModbusPoll
             }
         }
 
+        // TextChanged 이벤트로 콤마를 추가하는 메서드
+        private void textBox_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+
+
+            // 기존 콤마를 제거한 후 숫자만 남겨 포맷
+            string value = textBox.Text.Replace(",", "");
+
+            if (decimal.TryParse(value, out _))
+            {
+                // 천 단위 콤마 추가
+                textBox.Text = string.Format("{0:N0}", decimal.Parse(value));
+
+                // 기존 커서 위치를 유지하도록 설정
+                textBox.SelectionStart = textBox.Text.Length;
+            }
+        }
+
         private void btnscaleSetting_Click(object sender, EventArgs e)
         {
             if (IsRangeEnabled)
             {
-                if (int.TryParse(txt_startScale.Text, out int min) && int.TryParse(txt_endScale.Text, out int max))
+                // 텍스트에서 콤마를 제거한 후 숫자로 변환
+                string startScaleText = txt_startScale.Text.Replace(",", "");
+                string endScaleText = txt_endScale.Text.Replace(",", "");
+
+                if (int.TryParse(startScaleText, out int min) && int.TryParse(endScaleText, out int max))
                 {
                     if (max <= min)
                     {
                         MessageBox.Show("종료 값은 시작 값보다 커야 합니다.", "유효성 검사", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        txt_endScale.Text = "";
+                        txt_endScale.Text = ""; // 오류 발생 시 종료값 초기화
                     }
                     else
                     {
@@ -76,9 +102,10 @@ namespace ModbusPoll
             }
             else
             {
-                MessageBox.Show("Dont't use가 선택되었습니다.");
+                MessageBox.Show("Use scale이 선택이 안되었습니다.");
             }
         }
+
 
         private void ckb_isScale_CheckedChanged(object sender, EventArgs e)
         {
