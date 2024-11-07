@@ -240,98 +240,121 @@ namespace ModbusPoll
                 //rtb_dataView.Clear();
 
                 StringBuilder sb = new StringBuilder();
-
-                for (int i = 0; i < data.Length; i++)
+                if (data !=null)
                 {
-                    // Signed 범위 값 처리
-                    int signedValue = (short)data[i]; // 16-bit Signed 처리
-                    string displayedValue;
-                    
-
-                    if (signedValue < -32768 || signedValue > 32767)
+                    for (int i = 0; i < data.Length; i++)
                     {
-                        // Signed 범위를 넘어설 경우 Unsigned로 변환
-                        displayedValue = data[i].ToString(); // Unsigned 값 그대로 표시
+                        // Signed 범위 값 처리
+                        int signedValue = (short)data[i]; // 16-bit Signed 처리
+                        string displayedValue;
+
+
+                        if (signedValue < -32768 || signedValue > 32767)
+                        {
+                            // Signed 범위를 넘어설 경우 Unsigned로 변환
+                            displayedValue = data[i].ToString(); // Unsigned 값 그대로 표시
+                        }
+                        else
+                        {
+                            // Signed 범위 내의 값일 경우 Signed 값 표시
+                            displayedValue = signedValue.ToString();
+                        }
+
+                        // DataGridView 2열에 값 저장 
+                        //dataView.Rows.Add(new object[] { i + startAddress, displayedValue });
+                        dataView.Rows[i].Cells[1].Value = displayedValue;
+                        dataView.AllowUserToAddRows = true;
+
+
+
+                        // 32bit big-endian 값 저장
+                        //string bigEndian = Convert.ToString(ConverToBigEndian(data[i], data[i+1]));
+
+                        // RichTextView에 값 입력
+                        string hexValue = $"0x{data[i]:X4}";
+                        string binaryValue = Convert.ToString(data[i], 2).PadLeft(16, '0');
+                        sb.AppendLine($"{currentTime}\t Address: {i + startAddress}\t Signed -> {signedValue}\t Unsigned -> {data[i]}\t Hex -> {hexValue}\t Binary -> {FormatBinary(binaryValue)}");
+                        if (signedValue >= minValue && signedValue <= maxValue)
+                        {
+                            // 텍스트 색상 빨간색으로 설정
+                            rtb_dataView.SelectionStart = rtb_dataView.TextLength;
+                            rtb_dataView.SelectionLength = 0;  // 기존 선택 영역 지우기
+                            rtb_dataView.SelectionColor = Color.Red;
+                            rtb_dataView.AppendText($"{currentTime}\t Address: {i + startAddress}\t Signed -> {signedValue}\t Unsigned -> {data[i]}\t Hex -> {hexValue}\t Binary -> {FormatBinary(binaryValue)}\n");
+                        }
+                        else
+                        {
+                            // 일반 색상으로 텍스트 추가
+                            rtb_dataView.SelectionStart = rtb_dataView.TextLength;
+                            rtb_dataView.SelectionLength = 0;
+                            rtb_dataView.SelectionColor = Color.Black;
+                            rtb_dataView.AppendText($"{currentTime}\t Address: {i + startAddress}\t Signed -> {signedValue}\t Unsigned -> {data[i]}\t Hex -> {hexValue}\t Binary -> {FormatBinary(binaryValue)}\n");
+                        }
+
                     }
-                    else
-                    {
-                        // Signed 범위 내의 값일 경우 Signed 값 표시
-                        displayedValue = signedValue.ToString();
-                    }
+                    var firstCelData = dataView.Rows[0].Cells[1].Value.ToString();
+                    var secondData = dataView.Rows[1].Cells[1].Value.ToString();
+                    var thirdData = dataView.Rows[2].Cells[1].Value.ToString();
+                    var fourthData = dataView.Rows[3].Cells[1].Value.ToString();
 
-                    // DataGridView 2열에 값 저장 
-                    //dataView.Rows.Add(new object[] { i + startAddress, displayedValue });
-                    dataView.Rows[i].Cells[1].Value = displayedValue;
-                    dataView.AllowUserToAddRows = true;
+                    string signedBigEndian32Bit = Convert.ToString(ConverTo32BitBigEndian(firstCelData, secondData));
+                    string signedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndian(firstCelData, secondData));
+                    string signedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwap(firstCelData, secondData));
+                    string signedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwap(firstCelData, secondData));
 
-                    
+                    string unSignedBigEndian32Bit = Convert.ToString(ConvertTo32BitUnsignedBigEndian(firstCelData, secondData));
+                    string unSignedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndianUnsigned(firstCelData, secondData));
+                    string unSignedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwapUnsigned(firstCelData, secondData));
+                    string unSignedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwapUnsigned(firstCelData, secondData));
 
-                    // 32bit big-endian 값 저장
-                    //string bigEndian = Convert.ToString(ConverToBigEndian(data[i], data[i+1]));
+                    string signedBigEndian64Bit = Convert.ToString(ConvertTo64BitBigEndian(firstCelData, secondData, thirdData, fourthData));
+                    string signelLittleEndian64Bit = Convert.ToString(ConvertTo64BitLittleEndian(firstCelData, secondData, thirdData, fourthData));
+                    string signedBigEndian64BitByteSwap = Convert.ToString(ConvertTo64BitBigEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
+                    string signedLittleEndian64BitByteSwap = Convert.ToString(ConvertTo64BitLittleEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
 
-                    // RichTextView에 값 입력
-                    string hexValue = $"0x{data[i]:X4}";
-                    string binaryValue = Convert.ToString(data[i], 2).PadLeft(16, '0');
-                    sb.AppendLine($"{currentTime}\t Address: {i + startAddress}\t Signed -> {signedValue}\t Unsigned -> {data[i]}\t Hex -> {hexValue}\t Binary -> {FormatBinary(binaryValue)}");
-                    
-                    //sb.AppendLine($"32bit Signed big-endian : {bigEndian}");
-                }
-                var firstCelData = dataView.Rows[0].Cells[1].Value.ToString();
-                var secondData = dataView.Rows[1].Cells[1].Value.ToString();
-                var thirdData = dataView.Rows[2].Cells[1].Value.ToString();
-                var fourthData = dataView.Rows[3].Cells[1].Value.ToString();
-
-                string signedBigEndian32Bit = Convert.ToString(ConverTo32BitBigEndian(firstCelData, secondData));
-                string signedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndian(firstCelData, secondData));
-                string signedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwap(firstCelData, secondData));
-                string signedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwap(firstCelData, secondData));
-
-                string unSignedBigEndian32Bit = Convert.ToString(ConvertTo32BitUnsignedBigEndian(firstCelData, secondData));
-                string unSignedLittleEndian32Bit = Convert.ToString(ConvertTo32BitLittleEndianUnsigned(firstCelData, secondData));
-                string unSignedBigEndian32BitByteSwap = Convert.ToString(ConvertTo32BitBigEndianByteSwapUnsigned(firstCelData, secondData));
-                string unSignedLittleEndian32BitByteSwap = Convert.ToString(ConvertTo32BitLittleEndianByteSwapUnsigned(firstCelData, secondData));
-
-                string signedBigEndian64Bit = Convert.ToString(ConvertTo64BitBigEndian(firstCelData, secondData,thirdData,fourthData));
-                string signelLittleEndian64Bit = Convert.ToString(ConvertTo64BitLittleEndian(firstCelData, secondData,thirdData,fourthData));
-                string signedBigEndian64BitByteSwap = Convert.ToString(ConvertTo64BitBigEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
-                string signedLittleEndian64BitByteSwap = Convert.ToString(ConvertTo64BitLittleEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
-
-                string unSignedBigEndian64Bit = Convert.ToString(ConvertTo64BitUnsignedBigEndian(firstCelData, secondData, thirdData, fourthData));
-                string unSignelLittleEndian64Bit = Convert.ToString(ConvertTo64UnsignedBitLittleEndian(firstCelData, secondData, thirdData, fourthData));
-                string unSignedBigEndian64BitByteSwap = Convert.ToString(ConvertTo64BitUnsignedBigEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
-                string unSignedLittleEndian64BitByteSwap = Convert.ToString(ConvertTo64BitUnsignedLittleEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
-                sb.AppendLine("--------------------------------------------------------------------------------------------------------------------------------------");
-                if (quantity == 2)
-                {
-                    sb.AppendLine($"{currentTime}\t 32bit Signed big-endian : {signedBigEndian32Bit}");
-                    sb.AppendLine($"{currentTime}\t 32bit Signed little-endian : {signedLittleEndian32Bit}");
-                    sb.AppendLine($"{currentTime}\t 32bit Signed big-endian Byte Swap : {signedBigEndian32BitByteSwap}");
-                    sb.AppendLine($"{currentTime}\t 32bit Signed little-endian Byte Swap : {signedLittleEndian32BitByteSwap}");
-
-                    sb.AppendLine("------------------------------------------------------------------------------------------------------------------------------------");
-
-                    sb.AppendLine($"{currentTime}\t 32bit unSigned big-endian : {unSignedBigEndian32Bit}");
-                    sb.AppendLine($"{currentTime}\t 32bit unSigned little-endian : {unSignedLittleEndian32Bit}");
-                    sb.AppendLine($"{currentTime}\t 32bit unSigned big-endian Byte Swap : {unSignedBigEndian32BitByteSwap}");
-                    sb.AppendLine($"{currentTime}\t 32bit unSigned little-endian Byte Swap : {unSignedLittleEndian32BitByteSwap}");
-                }else if(quantity == 4)
-                {
-                    sb.AppendLine($"{currentTime}\t 64bit Signed big-endian : {signedBigEndian64Bit}");
-                    sb.AppendLine($"{currentTime}\t 64bit Signed little-endian : {signelLittleEndian64Bit}");
-                    sb.AppendLine($"{currentTime}\t 64bit Signed big-endian Byte Swap : {signedBigEndian64BitByteSwap}");
-                    sb.AppendLine($"{currentTime}\t 64bit Signed little-endian Byte Swap : {signedLittleEndian64BitByteSwap}");
-
+                    string unSignedBigEndian64Bit = Convert.ToString(ConvertTo64BitUnsignedBigEndian(firstCelData, secondData, thirdData, fourthData));
+                    string unSignelLittleEndian64Bit = Convert.ToString(ConvertTo64UnsignedBitLittleEndian(firstCelData, secondData, thirdData, fourthData));
+                    string unSignedBigEndian64BitByteSwap = Convert.ToString(ConvertTo64BitUnsignedBigEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
+                    string unSignedLittleEndian64BitByteSwap = Convert.ToString(ConvertTo64BitUnsignedLittleEndianByteSwap(firstCelData, secondData, thirdData, fourthData));
                     sb.AppendLine("--------------------------------------------------------------------------------------------------------------------------------------");
+                    if (quantity == 2)
+                    {
+                        sb.AppendLine($"{currentTime}\t 32bit Signed big-endian : {signedBigEndian32Bit}");
+                        sb.AppendLine($"{currentTime}\t 32bit Signed little-endian : {signedLittleEndian32Bit}");
+                        sb.AppendLine($"{currentTime}\t 32bit Signed big-endian Byte Swap : {signedBigEndian32BitByteSwap}");
+                        sb.AppendLine($"{currentTime}\t 32bit Signed little-endian Byte Swap : {signedLittleEndian32BitByteSwap}");
 
-                    sb.AppendLine($"{currentTime}\t 64bit unSigned big-endian : {unSignedBigEndian64Bit}");
-                    sb.AppendLine($"{currentTime}\t 64bit unSigned little-endian : {unSignelLittleEndian64Bit}");
-                    sb.AppendLine($"{currentTime}\t 64bit unSigned big-endian Byte Swap : {unSignedBigEndian64BitByteSwap}");
-                    sb.AppendLine($"{currentTime}\t 64bit unSigned little-endian Byte Swap : {unSignedLittleEndian64BitByteSwap}");
+                        sb.AppendLine("------------------------------------------------------------------------------------------------------------------------------------");
+
+                        sb.AppendLine($"{currentTime}\t 32bit unSigned big-endian : {unSignedBigEndian32Bit}");
+                        sb.AppendLine($"{currentTime}\t 32bit unSigned little-endian : {unSignedLittleEndian32Bit}");
+                        sb.AppendLine($"{currentTime}\t 32bit unSigned big-endian Byte Swap : {unSignedBigEndian32BitByteSwap}");
+                        sb.AppendLine($"{currentTime}\t 32bit unSigned little-endian Byte Swap : {unSignedLittleEndian32BitByteSwap}");
+                    }
+                    else if (quantity == 4)
+                    {
+                        sb.AppendLine($"{currentTime}\t 64bit Signed big-endian : {signedBigEndian64Bit}");
+                        sb.AppendLine($"{currentTime}\t 64bit Signed little-endian : {signelLittleEndian64Bit}");
+                        sb.AppendLine($"{currentTime}\t 64bit Signed big-endian Byte Swap : {signedBigEndian64BitByteSwap}");
+                        sb.AppendLine($"{currentTime}\t 64bit Signed little-endian Byte Swap : {signedLittleEndian64BitByteSwap}");
+
+                        sb.AppendLine("--------------------------------------------------------------------------------------------------------------------------------------");
+
+                        sb.AppendLine($"{currentTime}\t 64bit unSigned big-endian : {unSignedBigEndian64Bit}");
+                        sb.AppendLine($"{currentTime}\t 64bit unSigned little-endian : {unSignelLittleEndian64Bit}");
+                        sb.AppendLine($"{currentTime}\t 64bit unSigned big-endian Byte Swap : {unSignedBigEndian64BitByteSwap}");
+                        sb.AppendLine($"{currentTime}\t 64bit unSigned little-endian Byte Swap : {unSignedLittleEndian64BitByteSwap}");
+                    }
+                    _dataViewService.SetCellsToSigned(data.Length - 1);
+                    rtb_dataView.Text = sb.ToString();
+                    LogMessage = $"{currentTime} Read {40001 + startAddress} ~ {40001 + startAddress + quantity} data ";
+                    tslbl_status.ForeColor = Color.Black;
                 }
-                _dataViewService.SetCellsToSigned(data.Length-1);
-                rtb_dataView.Text = sb.ToString();
-                LogMessage = $"{currentTime} Read {40001+startAddress} ~ {40001+startAddress+quantity} data ";
-                tslbl_status.ForeColor = Color.Black;
+                else
+                {
+                    return;
+                }
+                
             }
             catch (Exception ex)
             {
@@ -371,7 +394,7 @@ namespace ModbusPoll
                 }
 
                 ushort[] valuesToWrite = new ushort[quantity];
-                for (int i = 0; i < quantity; i++)
+                for (int i = startAddress; i < startAddress + quantity; i++)
                 {
                     string cellValue = dataView.Rows[i].Cells[1].Value?.ToString();
                     if (string.IsNullOrEmpty(cellValue))
