@@ -23,12 +23,6 @@ public class ModbusTcpConnection : IModbusConnection
         _connectionTimer.AutoReset = true;
     }
 
-    /// <summary>
-    /// Slave 연결
-    /// </summary>
-    /// <param name="ipAddress"></param>
-    /// <param name="port"></param>
-    /// <param name="slaveId"></param>
     public void Connect(string ipAddress, int port, int slaveId)
     {
         try
@@ -42,6 +36,7 @@ public class ModbusTcpConnection : IModbusConnection
 
             // 연결 성공 후 타이머 시작
             _connectionTimer.Start();
+            Console.WriteLine("Successfully connected to the Modbus Slave.");
         }
         catch (Exception ex)
         {
@@ -50,9 +45,6 @@ public class ModbusTcpConnection : IModbusConnection
         }
     }
 
-    /// <summary>
-    /// Slave 연결 해제
-    /// </summary>
     public void Disconnect()
     {
         if (_tcpClient != null)
@@ -60,16 +52,11 @@ public class ModbusTcpConnection : IModbusConnection
             _tcpClient.Close();
             _tcpClient = null;
             Console.WriteLine("Disconnected from Modbus Slave.");
-
-            // 연결 해제 시 타이머 중지
             _connectionTimer.Stop();
         }
     }
 
-    /// <summary>
-    ///  Slave와 실시간 연결 상태 확인(form1로 전송)
-    /// </summary>
-    /// <returns></returns>
+    // 실시간 연결 상태 확인
     public bool IsSocketConnected()
     {
         try
@@ -86,34 +73,41 @@ public class ModbusTcpConnection : IModbusConnection
         }
     }
 
-    /// <summary>
-    /// Slave와 실시간 연결 상태 확인
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private async void CheckConnectionStatus(object sender, ElapsedEventArgs e)
     {
         try
         {
-            // 주기적 ReadHoldingRegisters 명령을 통해 연결 상태 확인
-            ushort startAddress = 0;
-            ushort quantity = 1;
-            await _modbusMaster.ReadHoldingRegistersAsync(_slaveId, startAddress, quantity);
-            // Console.WriteLine("Connection is alive.");
+            if (!await IsMasterConnectedAsync())
+            {
+                Console.WriteLine("Connection lost. Attempting to reconnect...");
+                _connectionTimer.Stop();
+                await AttemptReconnectAsync();
+            }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            Console.WriteLine("Connection lost. Attempting to reconnect...");
-            _connectionTimer.Stop(); // 재연결 시도 중 타이머 일시 정지
-            await AttemptReconnectAsync();
+            Console.WriteLine($"Error during connection check: {ex.Message}");
         }
     }
 
 
-    /// <summary>
-    /// Slave와 연결 끊김으로 재연결 시도
-    /// </summary>
-    /// <returns></returns>
+
+    // Async 방식으로 연결 상태 확인
+    private async Task<bool> IsMasterConnectedAsync()
+    {
+        try
+        {
+            // ReadHoldingRegisters 명령을 보내 연결 상태 확인
+            ushort startAddress = 0;
+            ushort quantity = 1;
+            await _modbusMaster.ReadHoldingRegistersAsync(_slaveId, startAddress, quantity);
+            return true; // 정상적으로 연결이 되었다면 true 반환
+        }
+        catch (Exception)
+        {
+            return false; // 연결 끊김, 예외 발생 시 false 반환
+        }
+    }
 
     private async Task AttemptReconnectAsync()
     {
@@ -121,26 +115,17 @@ public class ModbusTcpConnection : IModbusConnection
         {
             try
             {
-                // 재연결 시도
                 Connect(_ipAddress, _port, _slaveId); // 실제 IP 및 포트 사용
-                //Console.WriteLine("Reconnected successfully.");
                 _connectionTimer.Start(); // 재연결 성공 시 타이머 재시작
                 break;
             }
             catch
             {
-                //Console.WriteLine("Reconnection attempt failed. Retrying in 3 seconds...");
                 await Task.Delay(3000); // 재연결 대기 시간 설정
             }
         }
     }
 
-    /// <summary>
-    /// ReadHolding Register
-    /// </summary>
-    /// <param name="startAddress"></param>
-    /// <param name="quantity"></param>
-    /// <returns></returns>
     public async Task<ushort[]> ReadHoldingRegistersAsync(ushort startAddress, ushort quantity)
     {
         if (_modbusMaster == null)
@@ -151,12 +136,6 @@ public class ModbusTcpConnection : IModbusConnection
         return await _modbusMaster.ReadHoldingRegistersAsync(_slaveId, startAddress, quantity);
     }
 
-    /// <summary>
-    /// WriteHolding Register
-    /// </summary>
-    /// <param name="startAddress"></param>
-    /// <param name="values"></param>
-    /// <returns></returns>
     public async Task WriteHoldingRegistersAsync(ushort startAddress, ushort[] values)
     {
         if (_modbusMaster == null)
