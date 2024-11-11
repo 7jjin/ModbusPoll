@@ -51,6 +51,7 @@ public class ModbusTcpConnection : IModbusConnection
         {
             _tcpClient.Close();
             _tcpClient = null;
+            _modbusMaster.Dispose();
             Console.WriteLine("Disconnected from Modbus Slave.");
             _connectionTimer.Stop();
         }
@@ -81,7 +82,7 @@ public class ModbusTcpConnection : IModbusConnection
             {
                 Console.WriteLine("Connection lost. Attempting to reconnect...");
                 _connectionTimer.Stop();
-                await AttemptReconnectAsync();
+                //await AttemptReconnectAsync();
             }
         }
         catch (Exception ex)

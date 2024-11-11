@@ -56,8 +56,6 @@ namespace ModbusPoll
                     tslbl_conectText.Text = "Disconnected";
                     tslbl_status.Text = "Slave와의 연결이 끊어졌습니다.";
                     tslbl_status.ForeColor = Color.Black;
-                    _dataViewService.LoadData(dataView);
-                    rtb_dataView.Clear();
                 }
                 else
                 {
@@ -71,8 +69,7 @@ namespace ModbusPoll
                 color = Color.Red;
                 tslbl_conectText.Text = "Disconnected";
                 tslbl_status.Text = LogMessage != null ? LogMessage : "No connection";
-                _dataViewService.LoadData(dataView);
-                rtb_dataView.Clear();
+
             }
             
                 
@@ -150,7 +147,6 @@ namespace ModbusPoll
         {
             _modbusConnection.Disconnect();
             ResetSettingsToDefault();
-            rtb_dataView.Clear();
             IsConnected = false;
             LogMessage = "No connection";
         }
@@ -343,7 +339,6 @@ namespace ModbusPoll
                     {
                         // 40001을 더한 값 계산
                         int result = inputValue + 40001;
-
                         dataView.Columns[1].HeaderText = $"{result}";
                     }
                     tslbl_status.ForeColor = Color.Black;
@@ -352,7 +347,6 @@ namespace ModbusPoll
                 {
                     return;
                 }
-                
             }
             catch (Exception ex)
             {
@@ -421,8 +415,6 @@ namespace ModbusPoll
                         MessageBox.Show("데이터 형식이 올바르지 않습니다.");
                         return;
                     }
-                    
-                    
                     valuesToWrite[i] = unsignedValue;
                 }
 
