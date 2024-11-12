@@ -40,8 +40,8 @@ namespace ModbusPoll
             {
 
                 _modbusConnection.Connect(_settings.IpAddress, _settings.Port, _settings.SlaveId);
-                _form1.IsConnected = true;
-                _form1.LogMessage = $"{currentTime} connected slaveId - {slaveId} {ipAddress} {port}";
+                //_modbusConnection.IsConnected = true;
+                //_modbusConnection.LogMessage = $"{currentTime} connected slaveId - {slaveId} {ipAddress} {port}";
 
 
                 Properties.Settings.Default.ipAddress = ipAddress;
@@ -53,9 +53,10 @@ namespace ModbusPoll
             }
             catch (Exception ex)
             {
-                _form1.IsConnected = false;
-                MessageBox.Show($"{currentTime} Slave Connection Failed. {ipAddress}:{port}", "Failed to Connection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _form1.LogMessage = $"{currentTime} Slave Connection Failed. {ipAddress}:{port}";
+                //_modbusConnection.IsConnected = false;
+                //MessageBox.Show($"{currentTime} Slave Connection Failed. {ipAddress}:{port}", "Failed to Connection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //_modbusConnection.LogMessage = $"{currentTime} Slave Connection Failed. {ipAddress}:{port}";
+                Console.WriteLine(ex.ToString());
             }
         }
 

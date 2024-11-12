@@ -9,7 +9,10 @@ namespace ModbusPoll.Interfaces
 {
     public interface IModbusConnection
     {
-        void Connect(string ipAddress, int port,int slaveId);
+         bool IsConnected { get; set; }
+         bool IsListened { get; set; }
+        string LogMessage { get; set; }
+        Task Connect(string ipAddress, int port,int slaveId);
         void Disconnect();
         bool IsSocketConnected();
         Task<ushort[]> ReadHoldingRegistersAsync(ushort startAddress, ushort quantity);

@@ -10,8 +10,10 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace ModbusPoll
 {
@@ -24,8 +26,7 @@ namespace ModbusPoll
         private List<CellData> _cellDataList;
         private int minValue;
         private int maxValue;
-        public string LogMessage { get; set; }
-        public Boolean IsConnected { get; set; }
+        private Timer _statusUpdateTimer;
 
         public Form1(IModbusConnection modbusConnection, IDataViewService dataViewService, IContextMenuService contextMenuService)
         {
@@ -40,46 +41,47 @@ namespace ModbusPoll
             stlbl_statusCircle.Paint += StatusLabel_Paint;
 
             _cellDataList = new List<CellData>();
+
+            InitializeStatusUpdateTimer();
         }
 
+        private void InitializeStatusUpdateTimer()
+        {
+            _statusUpdateTimer = new Timer { Interval = 1000 }; // 1초 간격으로 연결 상태 확인
+            _statusUpdateTimer.Tick += (sender, e) =>
+            {
+                // _modbusConnection의 연결 상태를 주기적으로 확인하고, IsConnected 속성을 업데이트
+                _modbusConnection.IsConnected = _modbusConnection.IsSocketConnected();
 
+                // 상태 레이블 갱신
+                stlbl_statusCircle.Invalidate(); // 상태 원이 다시 그려지도록 트리거
+            };
+            _statusUpdateTimer.Start();
+        }
 
         private void StatusLabel_Paint(object sender, PaintEventArgs e)
         {
-            Color color = new Color();
-            string currentTime = DateTime.Now.ToString("[yyyy-MM-dd HH:mm:ss]");
-            if (IsConnected == true)
+            Color color;
+            if (_modbusConnection.IsConnected)
             {
-                if (_modbusConnection.IsSocketConnected() == false)
-                {
-                    color = Color.Red;
-                    tslbl_conectText.Text = "Disconnected";
-                    tslbl_status.Text = "Slave와의 연결이 끊어졌습니다.";
-                    tslbl_status.ForeColor = Color.Black;
-                }
-                else
-                {
-                    color = Color.Green;
-                    tslbl_conectText.Text = "Connected";
-                    tslbl_status.Text = LogMessage;
-                }
+                color = Color.Green;
+                tslbl_conectText.Text = "Connected";
+                tslbl_status.Text = _modbusConnection.LogMessage ?? "Connected to Slave";
             }
-            else if(IsConnected == false)
+            else
             {
                 color = Color.Red;
                 tslbl_conectText.Text = "Disconnected";
-                tslbl_status.Text = LogMessage != null ? LogMessage : "No connection";
-
+                tslbl_status.Text = _modbusConnection.LogMessage ?? "Slave와의 연결이 끊어졌습니다.";
             }
-            
-                
+
             using (SolidBrush brush = new SolidBrush(color))
             {
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias; // 부드럽게 원 그리기
-                e.Graphics.FillEllipse(brush, 0, 0, stlbl_statusCircle.Width - 1, stlbl_statusCircle.Height - 1); // 원 그리기
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                e.Graphics.FillEllipse(brush, 0, 0, stlbl_statusCircle.Width - 1, stlbl_statusCircle.Height - 1);
             }
-            
         }
+
 
 
 
@@ -147,8 +149,8 @@ namespace ModbusPoll
         {
             _modbusConnection.Disconnect();
             ResetSettingsToDefault();
-            IsConnected = false;
-            LogMessage = "No connection";
+            _modbusConnection.IsConnected = false;
+            _modbusConnection.LogMessage = "No connection";
         }
 
 
@@ -228,16 +230,17 @@ namespace ModbusPoll
                 if (!ushort.TryParse(txt_ReadAddress.Text, out startAddress))
                 {
                     MessageBox.Show("올바른 주소 값을 입력해주세요.");
-                    LogMessage = "Write Correct Address";
+                    _modbusConnection.LogMessage = "Write Correct Address";
                     return;
                 }
                 ushort quantity;
                 if (!ushort.TryParse(txt_ReadQuantity.Text, out quantity))
                 {
                     MessageBox.Show("올바른 수량 값을 입력해주세요.");
-                    LogMessage = "Write Correct Quantity (0~10)";
+                    _modbusConnection.LogMessage = "Write Correct Quantity (0~10)";
                     return;
                 }
+                
                 var data = await _modbusConnection.ReadHoldingRegistersAsync(startAddress, quantity);
                 //dataView.Rows.Clear();
                 //rtb_dataView.Clear();
@@ -334,7 +337,7 @@ namespace ModbusPoll
                     }
                     _dataViewService.SetCellsToSigned(data.Length - 1);
                     rtb_dataView.Text = sb.ToString();
-                    LogMessage = $"{currentTime} Read {40001 + startAddress} ~ {40001 + startAddress + quantity} data ";
+                    _modbusConnection.LogMessage = $"{currentTime} Read {40001 + startAddress} ~ {40001 + startAddress + quantity} data ";
                     if (ushort.TryParse(txt_ReadAddress.Text, out ushort inputValue))
                     {
                         // 40001을 더한 값 계산
@@ -354,7 +357,7 @@ namespace ModbusPoll
                 {
                     MessageBox.Show("Data 주소와 수량이 올바르지 않습니다.", "Illeagal Data Address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    LogMessage = $"{currentTime} 02 illegal Data Address";
+                    _modbusConnection.LogMessage = $"{currentTime} 02 illegal Data Address";
                     tslbl_status.ForeColor = Color.Red;
                 }
                 
@@ -376,17 +379,28 @@ namespace ModbusPoll
                 if (!ushort.TryParse(txt_WriteAddress.Text, out startAddress))
                 {
                     MessageBox.Show("올바른 주소 값을 입력해주세요.");
-                    LogMessage = "Write Correct Address";
+                    _modbusConnection.LogMessage = "Write Correct Address";
                     return;
                 }
                 ushort quantity;
                 if (!ushort.TryParse(txt_WriteQuantity.Text, out quantity))
                 {
                     MessageBox.Show("올바른 수량 값을 입력해주세요.");
-                    LogMessage = "Write Correct Quantity (0~10)";
+                    _modbusConnection.LogMessage = "Write Correct Quantity (0~10)";
                     return;
                 }
 
+                if(_modbusConnection == null)
+                {
+                    MessageBox.Show("Modbus 연결이 설정되지 않았습니다.");
+                    return;
+                }
+
+                if (!_modbusConnection.IsConnected)
+                {
+                    MessageBox.Show("Modbus Master에 연결되지 않았습니다.");
+                    return;
+                }
                 ushort[] valuesToWrite = new ushort[quantity];
                 for (int i = 0; i < quantity; i++)
                 {
@@ -419,8 +433,10 @@ namespace ModbusPoll
                 }
 
                 // Slave에 데이터 쓰기 (Function code 16번 사용)
+                Console.WriteLine("Start write Holding Register");
                 await _modbusConnection.WriteHoldingRegistersAsync(startAddress, valuesToWrite);
-                LogMessage = $"{currentTime} Write {40001 + startAddress} ~ {40001 + startAddress + quantity} data ";
+                Console.WriteLine("Finish write Holding Register");
+                _modbusConnection.LogMessage = $"{currentTime} Write {40001 + startAddress} ~ {40001 + startAddress + quantity} data ";
                 if (ushort.TryParse(txt_WriteAddress.Text, out ushort inputValue))
                 {
                     // 40001을 더한 값 계산
@@ -436,7 +452,7 @@ namespace ModbusPoll
                 {
                     MessageBox.Show("Data 주소와 수량이 올바르지 않습니다.", "Illeagal Data Address", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    LogMessage = $"{currentTime} 02 illegal Data Address";
+                    _modbusConnection.LogMessage = $"{currentTime} 02 illegal Data Address";
                     tslbl_status.ForeColor = Color.Red;
                 }
             }
